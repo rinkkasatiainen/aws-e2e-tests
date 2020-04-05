@@ -20,6 +20,10 @@ To start spying on what is happening in the app, we create a lambda that starts 
 
 There are no tests for this, as this is tested by the test themselves.
 
+Start by installing new NPM modules
+
+``` npm install ```
+
 ## Step 2.1 Create an SNS Topic
 
 open cdk.ts and add SNS topic creation there.
