@@ -54,6 +54,11 @@ test-stack: creating CloudFormation changeset...
  ✅  test-stack
 ```
 
+
+## TEST
+
+This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
+
 # step 0: development environment
 
 ### Setup direnv
