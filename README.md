@@ -14,8 +14,15 @@ To start with this step, do the following:
 export const env = `<your username, or something>`
 ```
 
-This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
-store all AWS environment specific details. 
+# Step 2: create first Lambda, DynamoDB table, SNS Topic
+
+To start spying on what is happening in the app, we create a lambda that starts listening to certain SNS topics. And pushes the data to DynamoDB. This is core functionality of the test "framework" used in this. 
+
+There are no tests for this, as this is tested by the test themselves.
+
+## Step 2.1 Create an SNS Topic
+
+open cdk.ts and add SNS topic creation there.
 
 # Step 1: create CDK stack:
 
@@ -148,8 +155,59 @@ fails with  message "--app is required either in command-line, in cdk.json or in
 later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
 
 ```bash
-$ aws lambda list-functions --profile e2e
-{
-    "Functions": []
-}
+    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
+    git checkout step-2 # to install dependencies
+    npm install # to install dependenencies
+    run npm run tsc:watch to start watching changes on CDK stack files.
+```
+
+
+
+
+# Testing in AWS environment
+
+## End-2-end testing on this plugin.
+
+To understand the core of all testing, regarding to what and how, it is adviced (by Aki S.) to watch a great video by 
+Sandi Metz on [Magic Tricks on testing](https://www.youtube.com/watch?v=URSWYvyc42M). With that information, the 
+following applies
+
+### Testing quadrants
+
+Separating everything to either a query or a command, is the core of understanding what to test, and how.
+
+* Query / a function that has a return value
+* Command / a function that has a side-effect
+
+And testing these, needs to be done differently  
+
+```
+
+/--------------------+------------------+-------------------\
+|   type             |     QUERY        |    COMMAND        |
++--------------------+------------------+-------------------+
+|  Incoming          |  Verify the      |  Verify direct    |
+|                    |  return value    |  side-effect      |
++--------------------+------------------+-------------------+
+|  Sent to self      |     do not       |      do not       |
+|                    |      test        |       test        |
++--------------------+------------------+-------------------+
+|  Outgoing          |     do not       |      verify       |
+|                    |      test        |    message is     |
+|                    |                  |       sent        |
+\--------------------+------------------+-------------------/
+```
+
+Taking this to AWS end-2-end testing, all the same applies.
+
+```
+
+incoming                              outgoing 
+   `           `----------------`     `==>
+    `==>      /                  \   `
+             /     AWS            \
+            /    Serverless        \
+           /     environment        \
+          /                          \
+         `----------------------------`
 ```
