@@ -3,9 +3,20 @@ This repository is step by step guide in creating a serverless environment using
 
 If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-To follow the progress, check out [TODO list](todo.md)
+# Step 0: get ready for this step:
+To start with this step, do the following:
 
-Check the [Testing Strategy](test-strategy.md) to understand the end goals
+   * `git checkout step-1`  # to install dependencies
+   * `npm install`  # to install dependenencies
+   * create file `cdk/bin/env.ts` with content
+```typescript
+export const env = `<your username, or something>`
+```
+
+This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
+store all AWS environment specific details. 
+
+# Step 1: create CDK stack:
 
 Previous steps:
    * [step-0](./step-0.md)
@@ -341,14 +352,61 @@ arn:aws:cloudformation:<region>:<AWS_ID>:stack/ResourcesDev/<UUID>
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
 You can verify this from AWS Console -> Service CloudFormation -> Stacks
 
-## Steps before step-2
+## step 0: development environment
 
-To start with next step, do the following:
+### AWS account
+
+You start by creating and AWS account or use existing. 
+Also, setup your AWS profile configs according to what is expected. 
+
+in `~/.aws/config` file the following should apply
 ```bash
-    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
-    git checkout step-2 # to install dependencies
-    npm install # to install dependenencies
-    run npm run tsc:watch to start watching changes on CDK stack files.
+[profile e2e]
+region = eu-central-1
+output = json
+source_profile = e2e
+```
+
+If you are using a role jump to access your account,
+```
+role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
+mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
+```
+
+and `~/.aws/credentials`
+the following details you get on your AWS Console -> IAM -> Security Credentials
+```bash
+[e2e]
+aws_access_key_id=<access key id>
+aws_secret_access_key=<secret access key>
+```
+
+## Install AWS-CLI. 
+
+To do stuff on command line, we need AWS Command Line Interface. To install that, I've used the following procedure 
+
+install PyENV and pyenv-virtualenv from 
+
+``` 
+   https://github.com/pyenv/pyenv 
+   https://github.com/pyenv/pyenv-virtualenv
+```
+
+Install python version 3.7.6 (or later)
+
+``` bash 
+    pyenv install -- list #get list of possible python installations
+    pyenv install 3.7.6
+```
+
+set python as version and create a virtualenv
+```bash 
+    pyenv local 3.7.6
+    pyenv virtualenv aws
+```
+activate newly created virtualenv
+```bash
+    pyenv activate aws
 ```
 
 
