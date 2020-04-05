@@ -179,8 +179,8 @@
       "ordered-imports": [
         true,
         {
-          "import-sources-order": "any", //"case-insensitive",
-          "named-imports-order": "case-insensitive"
+          "import-sources-order": "lowercase-last",
+          "named-imports-order": "lowercase-first"
         }
       ],
       "prefer-const": true,
