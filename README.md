@@ -1,1 +1,61 @@
 # aws-e2e-tests
+
+This repository is step by step guide in creating a serverless environment using AWS CDK, while creating end2end tests and unit tests. 
+
+
+# step 0: development environment
+
+## AWS account
+
+You start by creating and AWS account or use existing. Also, setup your AWS profile configs according to what is expected. The last to parts (role_arn and mfa_serial are optional - used if you do a role jump to dev role)
+
+in `~/.aws/config` file the following should apply
+```bash
+[profile e2e]
+region = eu-central-1
+output = json
+source_profile = e2e
+role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
+mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
+```
+and `~/.aws/credentials`
+the following details you get on your AWS Console -> IAM -> Security Credentials
+```bash
+[e2e]
+aws_access_key_id=<access key id>
+aws_secret_access_key=<secret access key>
+```
+
+## Install AWS-CLI. 
+
+To do stuff on command line, we need AWS Command Line Interface. To install that, I've used the following procedure 
+
+install PyENV and pyenv-virtualenv from 
+
+``` 
+   https://github.com/pyenv/pyenv 
+   https://github.com/pyenv/pyenv-virtualenv
+```
+
+Install python version 3.7.6 (or later)
+
+``` bash 
+    pyenv install -- list #get list of possible python installations
+    pyenv install 3.7.6
+```
+
+set python as version and create a virtualenv
+```bash 
+    pyenv local 3.7.6
+    pyenv virtualenv aws
+```
+activate newly created virtualenv
+```bash
+    pyenv activate aws
+```
+
+install AWS CLI
+
+```bash
+    pip install aws-cli
+```
