@@ -65,13 +65,28 @@ Add DynamoDB table to store things spied on.
 
 cdk diff should result in 
 ```
-$ Stack test-stack
+$ cdk diff
+Stack test-stack
 Resources
 [+] AWS::DynamoDB::Table spy-table spytable8E974F4C 
 ```
 
 Then deploy.
 
+```
+$ cdk deploy
+test-stack: deploying...
+test-stack: creating CloudFormation changeset...
+ 0/3 | 4:55:47 PM | CREATE_IN_PROGRESS   | AWS::DynamoDB::Table | spy-table (spytable8E974F4C) 
+ 0/3 | 4:55:47 PM | CREATE_IN_PROGRESS   | AWS::DynamoDB::Table | spy-table (spytable8E974F4C) Resource creation Initiated
+ 0/3 | 4:55:47 PM | UPDATE_IN_PROGRESS   | AWS::CDK::Metadata   | CDKMetadata 
+ 1/3 | 4:55:48 PM | UPDATE_COMPLETE      | AWS::CDK::Metadata   | CDKMetadata 
+
+ ✅  test-stack
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
+```
 
 # Step 1: create CDK stack:
 
