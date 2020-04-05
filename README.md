@@ -4,6 +4,10 @@ This repository is step by step guide in creating a serverless environment using
 
 # Step 1: create CDK stack:
 
+## install NPM dependencies
+
+..by running npm install
+
 ## create first stack
 
 To start, add a file 'cdk.json' with content:
@@ -28,6 +32,26 @@ class E2EStack extends CDK.Stack {
 }
 
 const stack = new E2EStack(app, "test-stack")
+```
+
+## compile typescript to Javascript for deployment
+
+The typescript CDK stack needs to be compiled to JS. For that, execute command ```npm run tsc``` that does exactly that.
+
+## deploy
+
+To deploy stack to AWS, run `cdk deploy --profile e2e`
+
+The end result should be as follows:
+```
+cdk deploy --profile e2e                                                                                                                                                  test-stack: deploying...
+test-stack: creating CloudFormation changeset...
+ 0/2 | 3:06:51 PM | CREATE_IN_PROGRESS   | AWS::CDK::Metadata | CDKMetadata 
+ 0/2 | 3:06:52 PM | CREATE_IN_PROGRESS   | AWS::CDK::Metadata | CDKMetadata Resource creation Initiated
+ 1/2 | 3:06:52 PM | CREATE_COMPLETE      | AWS::CDK::Metadata | CDKMetadata 
+ 2/2 | 3:06:54 PM | CREATE_COMPLETE      | AWS::CloudFormation::Stack | test-stack 
+
+ ✅  test-stack
 ```
 
 # step 0: development environment
