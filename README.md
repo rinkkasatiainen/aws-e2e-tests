@@ -2,17 +2,24 @@
 
 This repository is step by step guide in creating a serverless environment using AWS CDK, while creating end2end tests and unit tests. 
 
-If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
+# Step 1: create CDK stack:
 
-To follow the progress, check out [TODO list](todo.md)
+## create first stack
 
-Check the [Testing Strategy](test-strategy.md) to understand the end goals
+To start, add a file 'cdk.json' with content:
+```json
+{
+  "app": "node cdk/bin/cdk.js"
+}
+```
 
-# BEFORE:
- 
-To start this, you need access to an AWS Account, both to Console and programmatic access.
+Then create a file 'cdk/bin/cdk.ts' with following content
 
-## step 0: development environment
+```
+
+```
+
+# step 0: development environment
 
 ### Setup direnv
 
@@ -62,8 +69,7 @@ $ aws lambda list-functions --profile e2e
 
 ### AWS account
 
-You start by creating and AWS account or use existing. 
-Also, setup your AWS profile configs according to what is expected. 
+You start by creating and AWS account or use existing. Also, setup your AWS profile configs according to what is expected. The last to parts (role_arn and mfa_serial are optional - used if you do a role jump to dev role)
 
 in `~/.aws/config` file the following should apply
 ```bash
@@ -80,7 +86,6 @@ the following details you get on your AWS Console -> IAM -> Security Credentials
 aws_access_key_id=<access key id>
 aws_secret_access_key=<secret access key>
 ```
-
 
 ### Install AWS-CLI (version 1 - depracated). 
 
@@ -113,6 +118,5 @@ activate newly created virtualenv
 install AWS CLI
 
 ```bash
-    pip install awscli
+    pip install aws-cli
 ```
-
