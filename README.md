@@ -22,6 +22,10 @@ Previous steps:
    * [step-0](./step-0.md)
    * [step-1](./step-1.md)
 
+Previous steps:
+   * [step-0](./step-0.md)
+   * [step-1](./step-1.md)
+
 ## Introduction to step goals
 To be able to test only the Serverless stack, we need ways to:
    1) spy on _messages_ that are published on SNS Topics (see [TODO#Outline](todo.md))
@@ -351,6 +355,19 @@ arn:aws:cloudformation:<region>:<AWS_ID>:stack/ResourcesDev/<UUID>
 
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
 You can verify this from AWS Console -> Service CloudFormation -> Stacks
+
+## Steps before step-2
+
+To start with next step, do the following:
+```bash
+    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
+    git checkout step-2 # to install dependencies
+    npm install # to install dependenencies
+    run npm run tsc:watch to start watching changes on CDK stack files.
+```
+
+
+
 
 ## step 0: development environment
 
