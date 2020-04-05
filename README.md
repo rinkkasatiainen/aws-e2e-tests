@@ -26,7 +26,18 @@ Start by installing new NPM modules
 
 ## Step 2.1 Create an SNS Topic
 
-open cdk.ts and add SNS topic creation there.
+open cdk.ts and add SNS topic creation there.. Look for the code for comments on // step 2.1
+
+
+This succeeds, if ```cdk diff ``` returns
+```
+$ cdk diff 
+Stack test-stack
+Resources
+[+] AWS::SNS::Topic SNS_TOPIC_ERRORS-dev SNSTOPICERRORSdevCFB7A9D7 
+```
+
+## Step 2.2 Create DynamoDB
 
 # Step 1: create CDK stack:
 
