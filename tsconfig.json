@@ -23,12 +23,12 @@
     "paths": {
       "*": [
         "*",
-        "node_modules/*",
+        "node_modules/*"
       ]
     }
   },
   "include": [
-    "./bin/cdk.ts",
+    "cdk/bin/cdk.ts"
   ],
   "exclude": [
     "node_modules",
