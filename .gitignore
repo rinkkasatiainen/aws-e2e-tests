@@ -5,3 +5,5 @@
 .whoami
 cdk.out
 cdk/bin/env.ts
+cdk/**/*.d.ts
+cdk/**/*.js
