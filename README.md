@@ -2,7 +2,22 @@
 
 This repository is step by step guide in creating a serverless environment using AWS CDK, while creating end2end tests and unit tests. 
 
-If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
+# Step 1: create CDK stack:
+
+## create first stack
+
+To start, add a file 'cdk.json' with content:
+```json
+{
+  "app": "node cdk/bin/cdk.js"
+}
+```
+
+Then create a file 'cdk/bin/cdk.ts' with following content
+
+```
+
+```
 
 To follow the progress, check out [TODO list](todo.md)
 
