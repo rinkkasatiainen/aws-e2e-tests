@@ -16,7 +16,18 @@ To start, add a file 'cdk.json' with content:
 Then create a file 'cdk/bin/cdk.ts' with following content
 
 ```
+const app = new CDK.App();
 
+class E2EStack extends CDK.Stack {
+
+  public constructor(parent: CDK.App, id: string){
+    super(parent, id, {
+      tags: {aTag: "avalue"}
+    });
+  }
+}
+
+const stack = new E2EStack(app, "test-stack")
 ```
 
 # step 0: development environment
