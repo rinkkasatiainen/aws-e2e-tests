@@ -26,7 +26,9 @@ Start by installing new NPM modules
 
 ## Step 2.1 Create an SNS Topic
 
-open cdk.ts and add SNS topic creation there.. Look for the code for comments on // step 2.1
+open cdk.ts and add SNS topic creation there.. 
+
+Tip: Look for the code for comments on // step 2.1
 
 
 This succeeds, if ```cdk diff ``` returns
@@ -37,7 +39,40 @@ Resources
 [+] AWS::SNS::Topic SNS_TOPIC_ERRORS-dev SNSTOPICERRORSdevCFB7A9D7 
 ```
 
+Then deploy:
+
+```
+$ cdk deploy
+test-stack: deploying...
+test-stack: creating CloudFormation changeset...
+ 0/3 | 4:18:48 PM | CREATE_IN_PROGRESS   | AWS::SNS::Topic    | SNS_TOPIC_ERRORS-dev (SNSTOPICERRORSdevCFB7A9D7) 
+ 0/3 | 4:18:48 PM | UPDATE_IN_PROGRESS   | AWS::CDK::Metadata | CDKMetadata 
+ 0/3 | 4:18:48 PM | CREATE_IN_PROGRESS   | AWS::SNS::Topic    | SNS_TOPIC_ERRORS-dev (SNSTOPICERRORSdevCFB7A9D7) Resource creation Initiated
+ 1/3 | 4:18:49 PM | UPDATE_COMPLETE      | AWS::CDK::Metadata | CDKMetadata 
+ 2/3 | 4:18:59 PM | CREATE_COMPLETE      | AWS::SNS::Topic    | SNS_TOPIC_ERRORS-dev (SNSTOPICERRORSdevCFB7A9D7) 
+ 2/3 | 4:19:00 PM | UPDATE_COMPLETE_CLEA | AWS::CloudFormation::Stack | test-stack 
+ 3/3 | 4:19:01 PM | UPDATE_COMPLETE      | AWS::CloudFormation::Stack | test-stack 
+
+ ✅  test-stack
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<id>
+```
+
+
 ## Step 2.2 Create DynamoDB
+
+Add DynamoDB table to store things spied on.
+
+cdk diff should result in 
+```
+$ Stack test-stack
+Resources
+[+] AWS::DynamoDB::Table spy-table spytable8E974F4C 
+```
+
+Then deploy.
+
 
 # Step 1: create CDK stack:
 
