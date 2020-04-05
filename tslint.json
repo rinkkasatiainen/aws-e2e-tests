@@ -3,8 +3,7 @@
       "tslint-eslint-rules"
     ],
     "rulesDirectory": [
-      "node_modules/tslint-immutable/rules",
-      "tslint-no-unused-expression-chai"
+      "node_modules/tslint-immutable/rules"
     ],
     "linterOptions": {
       "exclude": [
@@ -146,7 +145,6 @@
         true,
         "allow-fast-null-checks"
       ],
-      "no-unused-expression-chai": true,
       "no-unused-variable": true,
       "no-use-before-declare": true,
       "no-var-keyword": true,

@@ -17,21 +17,30 @@ To start, add a file 'cdk.json' with content:
 }
 ```
 
+Create "env file" in `cdk/bin/env.ts`
+```
+  export const env = 'akis';
+```
+
+
 Then create a file 'cdk/bin/cdk.ts' with following content
 
 ```
+import * as CDK from '@aws-cdk/core';
+import { env } from './env';
+
 const app = new CDK.App();
 
 class E2EStack extends CDK.Stack {
 
-  public constructor(parent: CDK.App, id: string){
-    super(parent, id, {
-      tags: {aTag: "avalue"}
-    });
-  }
+    public constructor(parent: CDK.App, id: string) {
+        super(parent, id, {
+            tags: { aTag: 'avalue' },
+        });
+    }
 }
 
-const stack = new E2EStack(app, "test-stack")
+const stack = new E2EStack(app, `test-stack-${env}`);
 ```
 
 ## compile typescript to Javascript for deployment
