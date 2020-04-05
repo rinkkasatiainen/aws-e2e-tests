@@ -59,3 +59,11 @@ install AWS CLI
 ```bash
     pip install aws-cli
 ```
+
+## Test
+
+This step is ready, when running command 
+```bash
+   cdk --profile=e2e list
+```
+fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
