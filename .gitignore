@@ -1,6 +1,6 @@
 .aws_profile
 .aws_profile.enc
 .envrc
-.python-versioin
 .python-version
 .whoami
+cdk.out

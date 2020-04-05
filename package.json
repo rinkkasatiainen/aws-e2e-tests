@@ -1,0 +1,35 @@
+{
+  "name": "aws-e2e-tests",
+  "version": "1.0.0",
+  "description": "An example setup for AWS e2e tests.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc",
+    "tsc:watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rinkkasatiainen/aws-e2e-tests.git"
+  },
+  "keywords": [
+    "aws",
+    "serverless",
+    "testing",
+    "end-2-end",
+    "testing"
+  ],
+  "author": "Aki Salmi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rinkkasatiainen/aws-e2e-tests/issues"
+  },
+  "homepage": "https://github.com/rinkkasatiainen/aws-e2e-tests#readme",
+  "devDependencies": {
+    "@aws-cdk/core": "^1.31.0",
+    "cdk": "^1.31.0",
+    "tslint": "^6.1.1",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.8.3"
+  }
+}
