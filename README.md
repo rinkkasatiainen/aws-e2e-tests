@@ -138,6 +138,8 @@ Outputs
 [+] Output lambda-SpyLambda-handler lambdaSpyLambdahandler: {"Value":{"Ref":"teststacksnslistenerhandlerA3ADD29E"},"Export":{"Name":{"Fn::Join":["",["test-stack:Lambda:",{"Ref":"teststacksnslistenerhandlerA3ADD29E"}]]}}}
 ```
 
+And deploying this requires bootstrapping again: ```cdk bootstrap```, as this uses lambdas that need to be uploaded.
+
 To do get to all this, you need to:
 
    * create lambda function
