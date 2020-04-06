@@ -93,6 +93,58 @@ arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
 
 This is a function that takes on an SNS-message and pushes that to dynamodb. There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
 
+Now this is a big step, after which ```cdk diff``` should look like:
+
+```bash
+Stack test-stack
+IAM Statement Changes
+┌───┬─────────────────────────────────────────────────────┬────────┬─────────────────────────────────────────────────────┬─────────────────────────────────────────────────────┬─────────────────────────────────────────────────────┐
+│   │ Resource                                            │ Effect │ Action                                              │ Principal                                           │ Condition                                           │
+├───┼─────────────────────────────────────────────────────┼────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
+│ + │ ${LambdaExecutionRole4-test-stack-SpyLambda-handler │ Allow  │ sts:AssumeRole                                      │ Service:lambda.amazonaws.com                        │                                                     │
+│   │ .Arn}                                               │        │                                                     │                                                     │                                                     │
+├───┼─────────────────────────────────────────────────────┼────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
+│ + │ ${SNS_TOPIC_ERRORS-dev}                             │ Allow  │ sns:Publish                                         │ AWS:${LambdaExecutionRole4-test-stack-SpyLambda-han │                                                     │
+│   │                                                     │        │                                                     │ dler}                                               │                                                     │
+├───┼─────────────────────────────────────────────────────┼────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
+│ + │ ${spy-table.Arn}                                    │ Allow  │ dynamodb:GetItem                                    │ AWS:${LambdaExecutionRole4-test-stack-SpyLambda-han │                                                     │
+│   │                                                     │        │ dynamodb:PutItem                                    │ dler}                                               │                                                     │
+│   │                                                     │        │ dynamodb:UpdateItem                                 │                                                     │                                                     │
+├───┼─────────────────────────────────────────────────────┼────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
+│ + │ ${test-stack-sns-listener-handler.Arn}              │ Allow  │ lambda:InvokeFunction                               │ Service:sns.amazonaws.com                           │ "ArnLike": {                                        │
+│   │                                                     │        │                                                     │                                                     │   "AWS:SourceArn": "${SNS_TOPIC_ERRORS-dev}"        │
+│   │                                                     │        │                                                     │                                                     │ }                                                   │
+├───┼─────────────────────────────────────────────────────┼────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
+│ + │ arn:aws:logs:*:*:*                                  │ Allow  │ logs:CreateLogGroup                                 │ AWS:${LambdaExecutionRole4-test-stack-SpyLambda-han │                                                     │
+│   │                                                     │        │ logs:CreateLogStream                                │ dler}                                               │                                                     │
+│   │                                                     │        │ logs:PutLogEvents                                   │                                                     │                                                     │
+└───┴─────────────────────────────────────────────────────┴────────┴─────────────────────────────────────────────────────┴─────────────────────────────────────────────────────┴─────────────────────────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Parameters
+[+] Parameter AssetParameters/<StackID>/S3Bucket AssetParameters<StackID>S3BucketF64D0F81: {"Type":"String","Description":"S3 bucket for asset \"<StackID>\""}
+[+] Parameter AssetParameters/<StackID>/S3VersionKey AssetParameters<StackID>S3VersionKey16046E45: {"Type":"String","Description":"S3 key for asset version \"<StackId>\""}
+[+] Parameter AssetParameters/<StackId>/ArtifactHash AssetParameters<StackId>ArtifactHashB3360325: {"Type":"String","Description":"Artifact hash for asset \"<StackId>\""}
+
+Resources
+[+] AWS::IAM::Role LambdaExecutionRole4-test-stack-SpyLambda-handler LambdaExecutionRole4teststackSpyLambdahandler25AE317A 
+[+] AWS::IAM::Policy LambdaExecutionRole4-test-stack-SpyLambda-handler/DefaultPolicy LambdaExecutionRole4teststackSpyLambdahandlerDefaultPolicyA84B0AE7 
+[+] AWS::Lambda::Function test-stack-sns-listener-handler teststacksnslistenerhandlerA3ADD29E 
+[+] AWS::Lambda::Permission test-stack-sns-listener-handler/AllowInvoke:teststackSNSTOPICERRORSdev8BD88E20 teststacksnslistenerhandlerAllowInvoketeststackSNSTOPICERRORSdev8BD88E2013B6D227 
+[+] AWS::SNS::Subscription test-stack-sns-listener-handler/SNS_TOPIC_ERRORS-dev teststacksnslistenerhandlerSNSTOPICERRORSdev541BF9D3 
+[+] AWS::Logs::LogGroup LogGroup-test-stack-SpyLambda-handler LogGroupteststackSpyLambdahandlerD0934B36 
+
+Outputs
+[+] Output lambda-SpyLambda-handler lambdaSpyLambdahandler: {"Value":{"Ref":"teststacksnslistenerhandlerA3ADD29E"},"Export":{"Name":{"Fn::Join":["",["test-stack:Lambda:",{"Ref":"teststacksnslistenerhandlerA3ADD29E"}]]}}}
+```
+
+To do get to all this, you need to:
+
+   * create lambda function
+   * give it a role with 'assumed by'
+   * define log retention to 1 DAY
+   * set trigger, if one is defined
+   * define policies (SNS, DynamoDB, Logs)
 
 
 # Step 1: create CDK stack:
