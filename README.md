@@ -147,6 +147,38 @@ To do get to all this, you need to:
    * set trigger, if one is defined
    * define policies (SNS, DynamoDB, Logs)
 
+## Success Criteria for Step 2
+
+Publishing SNS message to the topic, by hand, from command line. should succeed. And that can be only seen from logs and DynamoDB:
+
+```
+ aws sns publish --message "{\"domain\": \"foo.bar.com\", \"error\": \"yes\"}" --topic-arn arn:aws:sns:eu-central-1:<AWS_ACCOUNT_ID>:sns_topic_errors-dev    
+ ```
+
+If logs say: ( a hypothetical situation): 
+```
+ERROR	Invoke Error	
+{
+    "errorType": "AccessDeniedException",
+    "errorMessage": "User: arn:aws:sts::<AWS_ACCOUNT_ID>:assumed-role/test-stack-LambdaExecutionRole4teststackSpyLambdah-1W0ISM1JA9KIR/test-stack-SpyLambda-handler is not authorized to perform: dynamodb:PutItem on resource: arn:aws:dynamodb:eu-central-1:<AWS_ACCOUNT_ID>:table/a-random-table-that-probably-does-not-exist",
+    "code": "AccessDeniedException",
+  [code removed for clarity]
+}
+```
+the part `a-random-table-that-probably-does-not-exist` indeed does not exists. Situation is, that table name is not given as environment variable. Please do that.
+
+Success criteria is following entry in the DynamoDB table:
+
+```
+Item {3}
+	> data Map {2}
+   > domain String :	foo.bar.com
+	  > error String	:	yes
+	> pk String	:	foo.bar.com
+	> sk String	:	sns_topic_errors-dev
+```
+
+Hooray, you are ready for the next step!
 
 # Step 1: create CDK stack:
 
