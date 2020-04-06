@@ -89,6 +89,12 @@ Stack ARN:
 arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
 ```
 
+## Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB
+
+This is a function that takes on an SNS-message and pushes that to dynamodb. There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
+
+
+
 # Step 1: create CDK stack:
 
 ## create first stack
