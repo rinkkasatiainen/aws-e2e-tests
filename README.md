@@ -15,6 +15,10 @@ in `~/.aws/config` file the following should apply
 region = eu-central-1
 output = json
 source_profile = e2e
+```
+
+If you are using a role jump to access your account,
+```
 role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
 mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
 ```
