@@ -57,7 +57,7 @@ activate newly created virtualenv
 install AWS CLI
 
 ```bash
-    pip install aws-cli
+    pip install awscli
 ```
 
 ## Test
