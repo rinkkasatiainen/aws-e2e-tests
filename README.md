@@ -68,6 +68,12 @@ This step is ready, when running command
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
 
+```bash
+$ aws lambda list-functions --profile e2e
+{
+    "Functions": []
+}
+```
 
 # Testing in AWS environment
 
