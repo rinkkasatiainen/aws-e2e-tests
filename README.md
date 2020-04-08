@@ -68,9 +68,11 @@ install AWS CLI
 
 This step is ready, when running command 
 ```bash
-   cdk --profile=e2e list
+   npx cdk --profile=e2e list
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
+
+later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
 
 ```bash
 $ aws lambda list-functions --profile e2e
