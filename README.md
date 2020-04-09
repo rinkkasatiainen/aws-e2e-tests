@@ -20,6 +20,12 @@ To start spying on what is happening in the app, we create a lambda that starts 
 
 There are no tests for this, as this is tested by the test themselves.
 
+## Steps to start to step 2:
+
+ * remove cdk/lib/cdk.ts
+ * ` git checkout step-2`
+ * ` npm install `
+
 Start by installing new NPM modules
 
 ``` npm install ```
