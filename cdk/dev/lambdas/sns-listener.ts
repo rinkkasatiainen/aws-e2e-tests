@@ -8,11 +8,12 @@ interface Message {
 
 export const handler: Handler<SNSEvent, {statusCode: number, body: string}> =
     async (event, context) => {
+        console.log('Spying event!', event);
+
         const region = context.invokedFunctionArn.split(':')[3];
         const documentClient = new DynamoDB.DocumentClient({ region });
         const promises: Array<Promise<PromiseResult<DynamoDB.DocumentClient.PutItemOutput, AWSError>>> = [];
 
-        console.log('In Handler!', event);
 
         event.Records
             .filter(it => it.EventSource === 'aws:sns')

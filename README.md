@@ -3,27 +3,38 @@ This repository is step by step guide in creating a serverless environment using
 
 If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-# Step 0: get ready for this step:
+To follow the progress, check out [TODO list](todo.md)
+
+Check the [Testing Strategy](test-strategy.md) to understand the end goals
+
+## Introduction to step goals
+To be able to test only the Serverless stack, we need ways to:
+   1) spy on _messages_ that are published on SNS Topics (see [TODO#Outline](todo.md))
+   
+On this step, we create an SNS Topic called **SNS_TOPIC_ERRORS** that is used 
+to send errors internally between lambdas. Then we create a lambda for dev/test environments that listens
+to this SNS Topic and pushes the messages to DynamoDB, to a **SPY_TABLE**. That table is used only in e2e 
+tests.
+
+There are no tests for this step, as this is tested by the test themselves.
+
+## BEFORE : get ready for this step:
 To start with this step, do the following:
 
-   * `git checkout step-1`  # to install dependencies
+   * `git reset --hard HEAD` # to remove the `cdk/bin/cdk.ts` file.
+   * `git checkout step-2`  
    * `npm install`  # to install dependenencies
-   * create file `cdk/bin/env.ts` with content
-```typescript
-export const env = `<your username, or something>`
+   * `npm run tsc:watch` to start watching changes on CDK stack files.
+
+## Step 2: create first Lambda, DynamoDB table, SNS Topic
+
+add region to your env.ts file
+```typescript 
+ // ..
+ export const region = 'eu-central-1'
 ```
 
-# Step 2: create first Lambda, DynamoDB table, SNS Topic
-
-To start spying on what is happening in the app, we create a lambda that starts listening to certain SNS topics. And pushes the data to DynamoDB. This is core functionality of the test "framework" used in this. 
-
-There are no tests for this, as this is tested by the test themselves.
-
-Start by installing new NPM modules
-
-``` npm install ```
-
-## Step 2.1 Create an SNS Topic
+### Step 2.1 Create an SNS Topic
 
 open cdk.ts and add SNS topic creation there.. 
 
@@ -58,8 +69,19 @@ Stack ARN:
 arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<id>
 ```
 
+#### Test SNS
 
-## Step 2.2 Create DynamoDB
+You can see the sns topic in AWS Console. Find Services -> SNS (or Simple Notification Service) and look for the created topic
+
+To test this, you can send this command in command line:
+
+```bash 
+   aws sns publish --message "{\"domain\": \"foo.bar.com\", \"error\": \"yes\"}" --topic-arn arn:aws:sns:eu-central-1:<AWS_ACCOUNT_ID>:sns_topic_errors-dev    
+```
+where you can copy-paste the topic-arn from AWS Console!
+
+
+### Step 2.2 Create DynamoDB
 
 Add DynamoDB table to store things spied on.
 
@@ -88,9 +110,29 @@ Stack ARN:
 arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
 ```
 
-## Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB
+### Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB
 
-This is a function that takes on an SNS-message and pushes that to dynamodb. There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
+Deploying this requires bootstrapping again: ```cdk bootstrap```, as this uses lambdas that need to be uploaded to the stack.
+
+This is a function that takes on an SNS-message and pushes that to dynamodb. 
+There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
+
+The steps are as follows (and follows my experience on working with AWS): 
+   1) make first deployment with minimum rights (LOGS)
+       1. check that lambda exists in AWS Console -> Lambdas. Notice that it does not have any triggers
+   1) add trigger to the lambda ([file spy-lambda.ts](cdk/dev/constructs/spy-lambda.ts))
+       1. test, but still no trigger
+   1) add policy to allow lambda to be triggered by SNS
+       1. This now ask you, when deploying, if changes in policies is ok.
+       1. And seeing from the console, the trigger is now on the lambda 
+   1) test, by sending publishing the SNS message
+       1. seeing that there are no logs in CloudWatch.
+       1. To fix this, give rights to Logs -> deploy
+   1) test, by sending publishin the SNS message
+       1. notice error in logs saying: `SpyLambda-handler is not authorized to perform: dynamodb:PutItem on resource:`
+       1. to fix this, give rights to dynamoDB. And deploy.
+   1) notice, again an error in logs
+       1. Fix it, deploy and run test again.
 
 Now this is a big step, after which ```cdk diff``` should look like:
 
@@ -180,7 +222,13 @@ Item {3}
 
 Hooray, you are ready for the next step!
 
-# Step 1: create CDK stack:
+## BEFORE step-3
+
+<to be defined>
+
+
+
+## Step 1: create CDK stack:
 
 Previous steps:
    * [step-0](./step-0.md)
@@ -289,6 +337,19 @@ arn:aws:cloudformation:<region>:<AWS_ID>:stack/ResourcesDev/<UUID>
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
 You can verify this from AWS Console -> Service CloudFormation -> Stacks
 
+## Steps before step-2
+
+To start with next step, do the following:
+```bash
+    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
+    git checkout step-2 # to install dependencies
+    npm install # to install dependenencies
+    run npm run tsc:watch to start watching changes on CDK stack files.
+```
+
+
+
+
 ## step 0: development environment
 
 ### AWS account
@@ -361,62 +422,12 @@ This step is ready, when running command
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
 
-later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
+later, you might want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
 
 ```bash
-    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
-    git checkout step-2 # to install dependencies
-    npm install # to install dependenencies
-    run npm run tsc:watch to start watching changes on CDK stack files.
+$ aws lambda list-functions --profile e2e
+{
+    "Functions": []
+}
 ```
 
-
-
-
-# Testing in AWS environment
-
-## End-2-end testing on this plugin.
-
-To understand the core of all testing, regarding to what and how, it is adviced (by Aki S.) to watch a great video by 
-Sandi Metz on [Magic Tricks on testing](https://www.youtube.com/watch?v=URSWYvyc42M). With that information, the 
-following applies
-
-### Testing quadrants
-
-Separating everything to either a query or a command, is the core of understanding what to test, and how.
-
-* Query / a function that has a return value
-* Command / a function that has a side-effect
-
-And testing these, needs to be done differently  
-
-```
-
-/--------------------+------------------+-------------------\
-|   type             |     QUERY        |    COMMAND        |
-+--------------------+------------------+-------------------+
-|  Incoming          |  Verify the      |  Verify direct    |
-|                    |  return value    |  side-effect      |
-+--------------------+------------------+-------------------+
-|  Sent to self      |     do not       |      do not       |
-|                    |      test        |       test        |
-+--------------------+------------------+-------------------+
-|  Outgoing          |     do not       |      verify       |
-|                    |      test        |    message is     |
-|                    |                  |       sent        |
-\--------------------+------------------+-------------------/
-```
-
-Taking this to AWS end-2-end testing, all the same applies.
-
-```
-
-incoming                              outgoing 
-   `           `----------------`     `==>
-    `==>      /                  \   `
-             /     AWS            \
-            /    Serverless        \
-           /     environment        \
-          /                          \
-         `----------------------------`
-```

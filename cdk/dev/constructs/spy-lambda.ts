@@ -2,18 +2,19 @@ import * as DynamoDB from '@aws-cdk/aws-dynamodb';
 import * as IAM from '@aws-cdk/aws-iam';
 import { SnsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as SNS from '@aws-cdk/aws-sns';
+import path from 'path';
 
-import { LambdaProps } from '../lambdas';
-import { AllSnsTopics } from '../sns-topics';
+import { LambdaProps } from '../../lib/constructs/lambdas';
+import { PossibleSnsTopics } from '../../lib/constructs/sns-topics';
 
 type LambdaCreator =
-    (x: NeededTables) => (y: NeededTopics) => LambdaProps;
+    (x: NeededTables) => (y: SpyLambdaTopics) => LambdaProps;
 
 interface NeededTables {
     spyTable: DynamoDB.ITable;
 }
 
-interface NeededTopics extends AllSnsTopics {
+export interface SpyLambdaTopics extends PossibleSnsTopics {
     SNS_TOPIC_ERRORS: SNS.ITopic;
 }
 
@@ -34,6 +35,7 @@ export const createSpyLambda: LambdaCreator =
         const triggers: SnsEventSource[] = [];
 
         return {
+            assetFolder: path.join(__dirname, '../lambdas'),
             policies,
             environmentVars,
             triggers,
