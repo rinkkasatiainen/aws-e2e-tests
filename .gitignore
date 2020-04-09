@@ -2,3 +2,4 @@ cdk.out
 cdk/bin/env.ts
 cdk/**/*.d.ts
 cdk/**/*.js
+cdk/bin/env.ts
