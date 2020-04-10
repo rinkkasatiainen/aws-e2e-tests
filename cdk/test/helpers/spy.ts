@@ -2,6 +2,8 @@ import { AWSError, DynamoDB } from 'aws-sdk';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { sleep } from './sleep';
 
+import { StackConfig } from '../test-aws-config';
+
 type SnsTopicSpy = (topicName: string) => {
     for: (domain: string) => Promise<PromiseResult<DynamoDB.DocumentClient.GetItemOutput, AWSError>>;
 };
@@ -80,16 +82,16 @@ const expectToFindBatchData:
         return null;
     };
 
-export const testSpy: (props: { documentClient: DynamoDB.DocumentClient, stackConfig: any }) => TestSpy =
+export const testSpy: (props: { documentClient: DynamoDB.DocumentClient, stackConfig: StackConfig }) => TestSpy =
     ({ documentClient, stackConfig }) => ({
         snsTopic: topicName => ({
             for: async domain => {
-                return expectToFindData(documentClient)(5)({ pk: domain, sk: topicName }, stackConfig.TestDBName);
+                return expectToFindData(documentClient)(5)({ pk: domain, sk: topicName }, stackConfig.SpyTableName);
             },
         }),
         errorsTable: () => ({
             for: async domain => {
-                return expectToFindBatchData(documentClient)(5)(domain, 'get-random-table-name-to-tests');
+                return expectToFindBatchData(documentClient)(5)(domain, stackConfig.ErrorsTable);
             },
         }),
         waitFor: (key: AWS.DynamoDB.DocumentClient.Key) => {

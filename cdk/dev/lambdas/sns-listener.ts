@@ -6,36 +6,39 @@ interface Message {
     domain: string;
 }
 
-export const handler: Handler<SNSEvent, {statusCode: number, body: string}> =
+export const handler: Handler<SNSEvent, { statusCode: number, body: string }> =
     async (event, context) => {
         console.log('Spying event!', event);
 
-        const region = context.invokedFunctionArn.split(':')[3];
-        const documentClient = new DynamoDB.DocumentClient({ region });
-        const promises: Array<Promise<PromiseResult<DynamoDB.DocumentClient.PutItemOutput, AWSError>>> = [];
+        if (event.Records) {
+
+            const region = context.invokedFunctionArn.split(':')[3];
+            const documentClient = new DynamoDB.DocumentClient({ region });
+            const promises: Array<Promise<PromiseResult<DynamoDB.DocumentClient.PutItemOutput, AWSError>>> = [];
 
 
-        event.Records
-            .filter(it => it.EventSource === 'aws:sns')
-            .forEach(({ Sns }) => {
+            event.Records
+                .filter(it => it.EventSource === 'aws:sns')
+                .forEach(({ Sns }) => {
 
-                const topic = Sns.TopicArn.split(':').slice(-1).pop();
+                    const topic = Sns.TopicArn.split(':').slice(-1).pop();
 
-                const message: Message = JSON.parse(Sns.Message);
+                    const message: Message = JSON.parse(Sns.Message);
 
-                const addSpyEvent: DynamoDB.DocumentClient.PutItemInput = {
-                    TableName: process.env.SPY_TABLE_NAME || 'a-random-table-that-probably-does-not-exist',
-                    Item: {
-                        pk: message.domain,
-                        sk: topic,
-                        data: message,
-                    },
-                };
+                    const addSpyEvent: DynamoDB.DocumentClient.PutItemInput = {
+                        TableName: process.env.SPY_TABLE_NAME || 'a-random-table-that-probably-does-not-exist',
+                        Item: {
+                            pk: message.domain,
+                            sk: topic,
+                            data: message,
+                        },
+                    };
 
-                promises.push(documentClient.put(addSpyEvent).promise());
-            });
+                    promises.push(documentClient.put(addSpyEvent).promise());
+                });
 
-        await Promise.all(promises);
+            await Promise.all(promises);
+        }
 
         const response = {
             statusCode: 200,

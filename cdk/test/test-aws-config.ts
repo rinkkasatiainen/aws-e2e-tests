@@ -6,6 +6,10 @@ export interface StackConfig {
     lambdaNames: string[]; // All lambdas that can be warmed up!
     spyTableName: string;  // This is the name of the spy table. We need to create this.
     snsErrorTopic: string;
+    ResourcesTable: string;
+    SpyTableName: string;
+    ErrorsTable: string;
+    lambdateststackdevFailsMiserablyhandler: string;
 }
 
 export const fetchStackConfiguration: (x: { StackName: string }) => Promise<StackConfig> =
@@ -28,3 +32,6 @@ export const fetchStackConfiguration: (x: { StackName: string }) => Promise<Stac
             { lambdaNames }
         );
     };
+
+export class DocumentClient {
+}

@@ -1,8 +1,13 @@
 import * as CDK from '@aws-cdk/core';
+
+import { createTables } from './constructs/dynamodb';
+import { createLambda } from './constructs/lambdas';
+import { failsMiserablyLambda } from './constructs/lambdas/fails-miserably';
 import { createTopics, AllSnsTopics } from './constructs/sns-topics';
 
 // tslint:disable-next-line:no-empty-interface
 export interface CreateStackProps {
+    topics: AllSnsTopics;
 }
 
 export interface StackTopicProps {
@@ -11,6 +16,7 @@ export interface StackTopicProps {
 
 // tslint:disable-next-line:no-empty-interface
 interface E2EStackOutput {
+    tables: AllTables;
 }
 
 export const createStackTopics: (stack: CDK.Stack, p: StackTopicProps) => AllSnsTopics =
@@ -22,14 +28,15 @@ export const createStackTopics: (stack: CDK.Stack, p: StackTopicProps) => AllSns
 
 export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOutput =
 // @ts-ignore
-    (scope, {}) => {
-        // TODO: Step 2.1 - create an SNS Topic
-        // createTopics(scope);
-        // TODO: Step 2.2 - create DynamoDB Table
-        // createTables(scope);
+    (scope, { topics: { SNS_TOPIC_ERRORS } }) => {
+        // TODO: Step 3.1 - Add fails miserably lambda
+        const tables = createTables(scope);
+        const { resourcesTable } = tables;
 
-        // TODO: Step 2.3 - use the Resources above to create a lambda that has proper rights!
-        // createLambda(scope)({ envVars: { NODE_ENV: 'dev' } })(createSpyLambda({ spyTable })({ SNS_TOPIC_ERRORS }));
+        createLambda
+        (scope)
+        ({ envVars: { NODE_ENV: 'dev' } })
+        (failsMiserablyLambda({ resourcesTable })({ SNS_TOPIC_ERRORS }));
 
-        return {};
+        return { tables };
     };

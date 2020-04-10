@@ -34,8 +34,26 @@ To start with this step, do the following:
 We use create a folder 'dist' and to add lambdas there. Later, the dist folder will be automatically created when bundling 
 lambdas using Webpack.
 
-There is lambda `dist/fails-miserably.ts`. Let's add that to the stack -> got to e2e-stack.ts 
-   
+There is lambda `dist/fails-miserably.ts`. Let's add that to the stack -> go to e2e-stack.ts  and create lambda. 
+This lambda requires a DynamoDB table from which it gets data, and SNS_TOPIC_ERROR to publish errors to.   
+
+to test this, you can test this by invoking the function from console:
+``` 
+$ aws lambda invoke --function-name <add lambda ARN here> tmp.out
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}  
+$
+```
+
+
+### Step 3.2 - Create test
+
+Run the test with `npm run test:e2e` and see it fail. It fails because the test does not know the Table Name. 
+It's not in the StackConfig.
+
+To fix that, we need to add tableNames to CloudFormation Outputs  in file `test-resources.ts`
 
 ## Step 2: create first Lambda, DynamoDB table, SNS Topic
 

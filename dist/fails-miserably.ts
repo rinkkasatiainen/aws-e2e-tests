@@ -1,4 +1,4 @@
-import { Handler, SNSEvent } from 'aws-lambda';
+import { Handler } from 'aws-lambda';
 import { DynamoDB, SNS } from 'aws-sdk';
 
 interface Message {
@@ -6,28 +6,30 @@ interface Message {
     data: { error: string; bar: string; };
 }
 
-export const handler: Handler<SNSEvent, { statusCode: number, body: string }> =
+export const handler: Handler<{ domain: string }, { statusCode: number, body: string }> =
     async (event, context) => {
-        console.log('Lambda that fails miserably', event);
+        console.log('Lambda that fails miserably', event, context);
 
         const region = context.invokedFunctionArn.split(':')[3];
         const documentClient = new DynamoDB.DocumentClient({ region });
+        const { domain } = event;
 
-        const input: DynamoDB.DocumentClient.GetItemInput = {
-            TableName: process.env.RESOURCE_TABLE || 'a-random-table-that-probably-does-not-exist',
-            Key: {
-                pk: 'foo.bar.com',
-            },
-        };
-        const { Item } = await documentClient.get(input).promise();
+        if (domain) {
+            const input: DynamoDB.DocumentClient.GetItemInput = {
+                TableName: process.env.RESOURCE_TABLE_NAME || 'a-random-table-that-probably-does-not-exist',
+                Key: {
+                    domain,
+                },
+            };
+            const { Item } = await documentClient.get(input).promise();
 
-        const domain = Item ? Item.domain : 'unknown domain';
-        const message: Message = { domain, data: { error: 'foo', bar: 'baz' } };
+            const message: Message = { domain, data: Item?.data || 'Unknown data' };
 
-        const errorTopicArn = process.env.ERRORS_SNS;
-        await new SNS({ region })
-            .publish({ Message: JSON.stringify(message), TopicArn: errorTopicArn })
-            .promise();
+            const errorTopicArn = process.env.ERRORS_SNS_ARN;
+            await new SNS({ region })
+                .publish({ Message: JSON.stringify(message), TopicArn: errorTopicArn })
+                .promise();
+        }
 
         const response = {
             statusCode: 503,
