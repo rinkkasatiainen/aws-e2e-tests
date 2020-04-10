@@ -4,31 +4,30 @@ This repository is step by step guide in creating a serverless environment using
 
 If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-# Step 0: get ready for this step:
+## Introduction to step goals
+To be able to test only the Serverless stack, we need ways to:
+   1) fake outgoing HTTP requests (commands and queries)
+   2) spy on _messages_ that are published on SNS Topics
+   3) check what is happening on DB level.
+   
+On this step, we solve the issue number 2 - we create an SNS Topic called **SNS_TOPIC_ERRORS** that is used 
+to send errors internally between lambdas. Then we create a lambda for dev/test environments that listens
+to this SNS Topic and pushes the messages to DynamoDB, to a **SPY_TABLE**. That table is used only in e2e 
+tests.
+
+There are no tests for this step, as this is tested by the test themselves.
+
+# BEFORE : get ready for this step:
 To start with this step, do the following:
 
-   * `git checkout step-1`  # to install dependencies
+   * `git reset --hard HEAD` # to remove the `cdk/bin/cdk.ts` file.
+   * `git checkout step-2`  # to install dependencies
    * `npm install`  # to install dependenencies
-   * create file `cdk/bin/env.ts` with content
-```typescript
-export const env = `<your username, or something>`
-```
+   * run `npm run tsc:watch` to start watching changes on CDK stack files.
 
 # Step 2: create first Lambda, DynamoDB table, SNS Topic
 
-To start spying on what is happening in the app, we create a lambda that starts listening to certain SNS topics. And pushes the data to DynamoDB. This is core functionality of the test "framework" used in this. 
 
-There are no tests for this, as this is tested by the test themselves.
-
-## Steps to start to step 2:
-
- * remove cdk/lib/cdk.ts
- * ` git checkout step-2`
- * ` npm install `
-
-Start by installing new NPM modules
-
-``` npm install ```
 
 ## Step 2.1 Create an SNS Topic
 
