@@ -2,12 +2,22 @@
 
 This repository is step by step guide in creating a serverless environment using AWS CDK, while creating end2end tests and unit tests. 
 
+If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-# step 0: development environment
+To follow the progress, check out [TODO list](todo.md)
 
-## AWS account
+Check the [Testing Strategy](test-strategy.md) to understand the end goals
 
-You start by creating and AWS account or use existing. Also, setup your AWS profile configs according to what is expected. The last to parts (role_arn and mfa_serial are optional - used if you do a role jump to dev role)
+# BEFORE:
+ 
+To start this, you need access to an AWS Account, both to Console and programmatic access.
+
+## step 0: development environment
+
+### AWS account
+
+You start by creating and AWS account or use existing. 
+Also, setup your AWS profile configs according to what is expected. 
 
 in `~/.aws/config` file the following should apply
 ```bash
@@ -22,6 +32,7 @@ If you are using a role jump to access your account,
 role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
 mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
 ```
+
 and `~/.aws/credentials`
 the following details you get on your AWS Console -> IAM -> Security Credentials
 ```bash
@@ -30,7 +41,7 @@ aws_access_key_id=<access key id>
 aws_secret_access_key=<secret access key>
 ```
 
-## Install AWS-CLI. 
+### Install AWS-CLI. 
 
 To do stuff on command line, we need AWS Command Line Interface. To install that, I've used the following procedure 
 
@@ -80,60 +91,3 @@ $ aws lambda list-functions --profile e2e
     "Functions": []
 }
 ```
-
-# Testing in AWS environment
-
-## End-2-end testing on this plugin.
-
-To understand the core of all testing, regarding to what and how, it is adviced (by Aki S.) to watch a great video by 
-Sandi Metz on [Magic Tricks on testing](https://www.youtube.com/watch?v=URSWYvyc42M). With that information, the 
-following applies
-
-### Testing quadrants
-
-Separating everything to either a query or a command, is the core of understanding what to test, and how.
-
-* Query / a function that has a return value
-* Command / a function that has a side-effect
-
-And testing these, needs to be done differently  
-
-```
-
-/--------------------+------------------+-------------------\
-|   type             |     QUERY        |    COMMAND        |
-+--------------------+------------------+-------------------+
-|  Incoming          |  Verify the      |  Verify direct    |
-|                    |  return value    |  side-effect      |
-+--------------------+------------------+-------------------+
-|  Sent to self      |     do not       |      do not       |
-|                    |      test        |       test        |
-+--------------------+------------------+-------------------+
-|  Outgoing          |     do not       |      verify       |
-|                    |      test        |    message is     |
-|                    |                  |       sent        |
-\--------------------+------------------+-------------------/
-```
-
-Taking this to AWS end-2-end testing, all the same applies.
-
-```
-
-incoming                              outgoing 
-   `           `----------------`     `==>
-    `==>      /                  \   `
-             /     AWS            \
-            /    Serverless        \
-           /     environment        \
-          /                          \
-         `----------------------------`
-```
-
-when thinking the whole as a unit, the following rules apply.
-
-1) we execute tests by sending messages to the Serverless environment. Either via 
-    * invoking lambdas directly (in case where that is appropriate), or
-    * sending an event to SNS topic.
-1) we create test doubles around the unit -> meaning we fake all the external connections.
-
-
