@@ -2,11 +2,22 @@
 
 This repository is step by step guide in creating a serverless environment using AWS CDK, while creating end2end tests and unit tests. 
 
+If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
+
+# Step 0: get ready for this step:
+To start with this step, do the following:
+
+   * `git checkout step-1`  # to install dependencies
+   * `npm install`  # to install dependenencies
+   * create file `cdk/bin/env.ts` with content
+```typescript
+export const env = `<your username, or something>`
+```
+
+This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
+store all AWS environment specific details. 
+
 # Step 1: create CDK stack:
-
-## install NPM dependencies
-
-..by running npm install
 
 ## create first stack
 
@@ -60,6 +71,7 @@ test-stack: creating CloudFormation changeset...
 ## TEST
 
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
+You can verify this from AWS Console -> Service CloudFormation -> Stacks
 
 # step 0: development environment
 
