@@ -53,7 +53,7 @@ $
 Run the test with `npm run test:e2e` and see it fail. It fails because the test does not know the Table Name. 
 It's not in the StackConfig.
 
-To fix that, we need to add tableNames to CloudFormation Outputs  in file `test-resources.ts`
+To fix that, we need to add tableNames to CloudFormation Outputs  in file `test-resources.ts` and also ResourcesTable in cdk.ts
 
 ## Step 2: create first Lambda, DynamoDB table, SNS Topic
 

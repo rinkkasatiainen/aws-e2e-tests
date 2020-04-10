@@ -21,21 +21,21 @@ export interface Topics extends PossibleSnsTopics {
 
 export const failsMiserablyLambda: LambdaCreator =
     ({ resourcesTable }) => ({ SNS_TOPIC_ERRORS }) => {
-        // TODO: Step 3.1 Add policies for 'SNS, DynamoDB and logs'
+
         const policies: IAM.PolicyStatement[] = [
             policyForSns([SNS_TOPIC_ERRORS.topicArn]),
             policyLogs(),
             policyForDynamoRW([resourcesTable.tableArn]),
         ];
 
-        // TODO: Step 3.1 add environment variables
+        // Step 3.1: Add envVars that the labda uses / see dist/fails-miserably.ts
         const environmentVars = {
             NODE_ENV: 'dev',
             RESOURCE_TABLE_NAME: resourcesTable.tableName,
             ERRORS_SNS_ARN: SNS_TOPIC_ERRORS.topicArn,
         };
 
-        // TODO: Step 3.1 - no event sources
+        // Step 3.1: no event sources
         const triggers: SnsEventSource[] = [];
 
         return {

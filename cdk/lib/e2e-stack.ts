@@ -1,8 +1,6 @@
 import * as CDK from '@aws-cdk/core';
 
-import { createTables } from './constructs/dynamodb';
-import { createLambda } from './constructs/lambdas';
-import { failsMiserablyLambda } from './constructs/lambdas/fails-miserably';
+import { createTables, AllTables } from './constructs/dynamodb';
 import { createTopics, AllSnsTopics } from './constructs/sns-topics';
 
 // tslint:disable-next-line:no-empty-interface
@@ -29,14 +27,14 @@ export const createStackTopics: (stack: CDK.Stack, p: StackTopicProps) => AllSns
 export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOutput =
 // @ts-ignore
     (scope, { topics: { SNS_TOPIC_ERRORS } }) => {
-        // TODO: Step 3.1 - Add fails miserably lambda
         const tables = createTables(scope);
-        const { resourcesTable } = tables;
 
-        createLambda
-        (scope)
-        ({ envVars: { NODE_ENV: 'dev' } })
-        (failsMiserablyLambda({ resourcesTable })({ SNS_TOPIC_ERRORS }));
+        // TODO: Step 3.1 - Add fails miserably lambda
+        // const { resourcesTable } = tables;
+        // createLambda
+        // (scope)
+        // ({ envVars: { NODE_ENV: 'dev' } })
+        // (failsMiserablyLambda({ resourcesTable })({ SNS_TOPIC_ERRORS }));
 
         return { tables };
     };

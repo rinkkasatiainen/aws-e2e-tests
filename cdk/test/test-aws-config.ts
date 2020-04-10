@@ -2,14 +2,19 @@ import AWS from 'aws-sdk';
 
 export const region: string = process.env.DEFAULT_AWS_REGION || process.env.AWS_REGION || 'eu-central-1';
 
-export interface StackConfig {
-    lambdaNames: string[]; // All lambdas that can be warmed up!
-    spyTableName: string;  // This is the name of the spy table. We need to create this.
-    snsErrorTopic: string;
-    ResourcesTable: string;
-    SpyTableName: string;
-    ErrorsTable: string;
-    lambdateststackdevFailsMiserablyhandler: string;
+export type StackConfigKeys =  'snsErrorTopic' | 'ResourcesTable' | 'SpyTableName' | 'ErrorsTable' | 'lambdateststackdevFailsMiserablyhandler';
+
+export type StackConfigProps = { [key in StackConfigKeys]: string };
+export interface LambdaNames { lambdaNames: string[]; }
+
+export interface StackConfig extends StackConfigProps, LambdaNames {
+    // lambdaNames: string[]; // All lambdas that can be warmed up!
+    // spyTableName: string;  // This is the name of the spy table. We need to create this.
+    // snsErrorTopic: string;
+    // ResourcesTable: string;
+    // SpyTableName: string;
+    // ErrorsTable: string;
+    // lambdateststackdevFailsMiserablyhandler: string;
 }
 
 export const fetchStackConfiguration: (x: { StackName: string }) => Promise<StackConfig> =

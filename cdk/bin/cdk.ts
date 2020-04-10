@@ -36,4 +36,11 @@ const topics = createTopics(stack);
 // Add test related resources here. Everything we need to set up tools to see what's happening inside.
 addTestResources(stack, { topics });
 
-createStack(stack, { topics });
+// TODO: Step 3.1 - add fails-miserably code to the stack.
+/* const { tables } = */ createStack(stack, { topics });
+
+// const { resourcesTable } = tables;
+// addCfnOutput(stack)('ResourcesTable')({
+//     value: resourcesTable.tableName,
+//     exportName: `${scope.stackName}:Table:${lambdaName}`,
+// });
