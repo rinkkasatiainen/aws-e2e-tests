@@ -27,13 +27,16 @@
     "paths": {
       "*": [
         "*",
-        "node_modules/*"
+        "node_modules/*",
+        "cdk/test/types/*"
       ]
     }
   },
   "include": [
     "cdk/bin/cdk.ts",
-    "cdk/lib/dev/lambdas/*.ts"
+    "cdk/lib/dev/lambdas/*.ts",
+    "cdk/test/acceptance/*.ts",
+    "dist/*.ts"
   ],
   "exclude": [
     "node_modules",

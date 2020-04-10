@@ -3,73 +3,32 @@ This repository is step by step guide in creating a serverless environment using
 
 If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-# Step 0: get ready for this step:
-To start with this step, do the following:
+To follow the progress, check out [TODO list](todo.md)
 
-   * `git checkout step-1`  # to install dependencies
-   * `npm install`  # to install dependenencies
-   * create file `cdk/bin/env.ts` with content
-```typescript
-export const env = `<your username, or something>`
-```
-
-This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
-store all AWS environment specific details. 
-
-# Step 1: create CDK stack:
+Check the [Testing Strategy](test-strategy.md) to understand the end goals
 
 Previous steps:
    * [step-0](./step-0.md)
    * [step-1](./step-1.md)
-
-Previous steps:
-   * [step-0](./step-0.md)
-   * [step-1](./step-1.md)
-   * [step-2](./step-2.md)
 
 ## Introduction to step goals
+To be able to test only the Serverless stack, we need ways to:
+   1) spy on _messages_ that are published on SNS Topics (see [TODO#Outline](todo.md))
+   
+On this step, we create an SNS Topic called **SNS_TOPIC_ERRORS** that is used 
+to send errors internally between lambdas. Then we create a lambda for dev/test environments that listens
+to this SNS Topic and pushes the messages to DynamoDB, to a **SPY_TABLE**. That table is used only in e2e 
+tests.
 
-Learning goals are
-   * introduce CloudFormation Outputs (set the topic name)
-   * trigger a lambda function that will fail (and publish message to SNS)
-   * verify that error is stored to spy DB
-
+There are no tests for this step, as this is tested by the test themselves.
 
 ## BEFORE : get ready for this step:
 To start with this step, do the following:
 
-   * `git reset --hard HEAD` 
-   * `git checkout step-3`  
-   * `npm install`  # to install dependencies
+   * `git reset --hard HEAD` # to remove the `cdk/bin/cdk.ts` file.
+   * `git checkout step-2`  
+   * `npm install`  # to install dependenencies
    * `npm run tsc:watch` to start watching changes on CDK stack files.
-   
-## Step 3: Deploy first 'production lambda' and test that
-
-### Step 3.1:  Create first production lambda
-
-We use create a folder 'dist' and to add lambdas there. Later, the dist folder will be automatically created when bundling 
-lambdas using Webpack.
-
-There is lambda `dist/fails-miserably.ts`. Let's add that to the stack -> go to e2e-stack.ts  and create lambda. 
-This lambda requires a DynamoDB table from which it gets data, and SNS_TOPIC_ERROR to publish errors to.   
-
-to test this, you can test this by invoking the function from console:
-``` 
-$ aws lambda invoke --function-name <add lambda ARN here> tmp.out
-{
-    "StatusCode": 200,
-    "ExecutedVersion": "$LATEST"
-}  
-$
-```
-
-
-### Step 3.2 - Create test
-
-Run the test with `npm run test:e2e` and see it fail. It fails because the test does not know the Table Name. 
-It's not in the StackConfig.
-
-To fix that, we need to add tableNames to CloudFormation Outputs  in file `test-resources.ts` and also ResourcesTable in cdk.ts
 
 ## Step 2: create first Lambda, DynamoDB table, SNS Topic
 
@@ -272,267 +231,4 @@ Hooray, you are ready for the next step!
 <to be defined>
 
 
-
-## Step 1: create CDK stack:
-
-Previous steps:
-   * [step-0](./step-0.md)
-
-## BEFORE:
-To start with this step, do the following:
-
-   * `git checkout step-1`  
-   * `npm install`  # to install dependenencies
-   * create file `cdk/bin/env.ts` with content
-```typescript
-export const env = `<your username, or something>`
-```
-
-This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
-store all AWS environment specific details. 
-
-# Step Goals:
-
-When running this workshop earlier, we found out that errors in CDK stack in later steps required us to destroy the stack,
-but the whole stack is not destroyed, as some of the created resources are more permantent than others (S3 and DynamoDB). 
-For that reason, I choose to try out an experiment where we create 2 separate stacks, one for permanent things that evolves
-independently of the application Stack.
-
-## Step 1: create CDK app with multiple stacks:
-
-### create stacks
-
-To start, add a file 'cdk.json' with content:
-```json
-{
-  "app": "node cdk/bin/cdk.js"
-}
-```
-
-Then create a file 'cdk/bin/cdk.ts' with following content
-
-Previous steps:
-   * [step-0](./step-0.md)
-```
-import * as CDK from '@aws-cdk/core';
-import {env} from './env';
-
-const app = new CDK.App();
-
-class E2EStack extends CDK.Stack {
-    public constructor(parent: CDK.App, id: string) {
-        super(parent, id, {
-            tags: {aTag: 'avalue'},
-        });
-    }
-}
-
-class PermanentResources extends CDK.Stack {
-    public constructor(parent: CDK.App, id: string) {
-        super(parent, id, {
-            tags: {aTag: 'avalue'},
-        });
-    }
-}
-
-const capitalize = (s: string) => {
-    return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
-new E2EStack(app, `TestStack${capitalize(env)}`);
-new PermanentResources(app, `Resources${capitalize(env)}`);
-```
-
-### compile typescript to Javascript for deployment
-
-The typescript CDK stack needs to be compiled to JS. For that, execute command ```npm run tsc``` that does exactly that.
-
-### deploy
-
-To list the Stacks you can deploy to AWS, you can run the following command: `$ npm run cdk -- synth`, which prints out
-```
-[...]
-Successfully synthesized to [...]/aws-e2e-tests/cdk.out
-Supply a stack id (ResourcesDev, TestStackDev) to display its template.
-```
-
-To deploy stack to AWS, run `npm run cdk -- deploy [ResourcesDev | TestStackDev]`
-
-The end result should be as follows:
-```
-> cdk "deploy" "ResourcesDev"
-
-(node:62552) ExperimentalWarning: The fs.promises API is experimental
-ResourcesDev: deploying...
-ResourcesDev: creating CloudFormation changeset...
- 0/2 | 9:54:38 AM | CREATE_IN_PROGRESS   | AWS::CDK::Metadata | CDKMetadata 
- 0/2 | 9:54:39 AM | CREATE_IN_PROGRESS   | AWS::CDK::Metadata | CDKMetadata Resource creation Initiated
- 1/2 | 9:54:39 AM | CREATE_COMPLETE      | AWS::CDK::Metadata | CDKMetadata 
- 2/2 | 9:54:41 AM | CREATE_COMPLETE      | AWS::CloudFormation::Stack | ResourcesDev 
-
-    ResourcesDev
-
-Stack ARN:
-arn:aws:cloudformation:<region>:<AWS_ID>:stack/ResourcesDev/<UUID>
-```
-
-
-## TEST
-
-This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
-You can verify this from AWS Console -> Service CloudFormation -> Stacks
-
-## Steps before step-2
-
-To start with next step, do the following:
-```bash
-    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
-    git checkout step-2 # to install dependencies
-    npm install # to install dependenencies
-    run npm run tsc:watch to start watching changes on CDK stack files.
-```
-
-
-
-
-## step 0: development environment
-
-### AWS account
-
-You start by creating and AWS account or use existing. 
-Also, setup your AWS profile configs according to what is expected. 
-
-in `~/.aws/config` file the following should apply
-```bash
-[profile e2e]
-region = eu-central-1
-output = json
-source_profile = e2e
-```
-
-If you are using a role jump to access your account,
-```
-role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
-mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
-```
-
-and `~/.aws/credentials`
-the following details you get on your AWS Console -> IAM -> Security Credentials
-```bash
-[e2e]
-aws_access_key_id=<access key id>
-aws_secret_access_key=<secret access key>
-```
-
-## Install AWS-CLI. 
-
-To do stuff on command line, we need AWS Command Line Interface. To install that, I've used the following procedure 
-
-install PyENV and pyenv-virtualenv from 
-
-``` 
-   https://github.com/pyenv/pyenv 
-   https://github.com/pyenv/pyenv-virtualenv
-```
-
-Install python version 3.7.6 (or later)
-
-``` bash 
-    pyenv install -- list #get list of possible python installations
-    pyenv install 3.7.6
-```
-
-set python as version and create a virtualenv
-```bash 
-    pyenv local 3.7.6
-    pyenv virtualenv aws
-```
-activate newly created virtualenv
-```bash
-    pyenv activate aws
-```
-
-
-
-
-## step 0: development environment
-
-### AWS account
-
-You start by creating and AWS account or use existing. 
-Also, setup your AWS profile configs according to what is expected. 
-
-in `~/.aws/config` file the following should apply
-```bash
-[profile e2e]
-region = eu-central-1
-output = json
-source_profile = e2e
-```
-
-If you are using a role jump to access your account,
-```
-role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
-mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
-```
-
-and `~/.aws/credentials`
-the following details you get on your AWS Console -> IAM -> Security Credentials
-```bash
-[e2e]
-aws_access_key_id=<access key id>
-aws_secret_access_key=<secret access key>
-```
-
-
-## Install AWS-CLI. 
-
-To do stuff on command line, we need AWS Command Line Interface. To install that, I've used the following procedure 
-
-install PyENV and pyenv-virtualenv from 
-
-``` 
-   https://github.com/pyenv/pyenv 
-   https://github.com/pyenv/pyenv-virtualenv
-```
-
-Install python version 3.7.6 (or later)
-
-``` bash 
-    pyenv install -- list #get list of possible python installations
-    pyenv install 3.7.6
-```
-
-set python as version and create a virtualenv
-```bash 
-    pyenv local 3.7.6
-    pyenv virtualenv aws
-```
-activate newly created virtualenv
-```bash
-    pyenv activate aws
-```
-
-install AWS CLI
-
-```bash
-    pip install awscli
-```
-
-## Test
-
-This step is ready, when running command 
-```bash
-   npx cdk --profile=e2e list
-```
-fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
-
-later, you might want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
-
-```bash
-$ aws lambda list-functions --profile e2e
-{
-    "Functions": []
-}
-```
 

@@ -8,6 +8,7 @@ import {createLambda} from "../lib/constructs/lambdas";
 
 export interface TestResourcesProps {
     topics: SpyLambdaTopics;
+    tables: AllTables;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -48,6 +49,13 @@ export const createTestTables: (stack: CDK.Stack) => E2EStackOutput =
         const spyTableName = `XXYYZZ-${env}`
         // TODO: Step 2.2 - create DynamoDB Table
         createTable(scope, spyTableName, {tableName: spyTableName});
+
+        // TODO: Step 3.1: Add CloudFormation Output to pass SpyTable name for E2E test
+        // addCfnOutput(scope)('SpyTableName')({
+        //     value: spyTableName,
+        //     exportName: `${ scope.stackName }:Table:SpyTableName`,
+        // });
+
 
         return {};
     };

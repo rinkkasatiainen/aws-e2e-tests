@@ -1,8 +1,13 @@
 import * as CDK from '@aws-cdk/core';
-import { createTopics, AllSnsTopics } from './constructs/sns-topics';
 
-// tslint:disable-next-line:no-empty-interface
+import {createTables, AllTables} from './constructs/dynamodb';
+import {AllSnsTopics} from './constructs/sns-topics';
+import {createLambda} from "./constructs/lambdas";
+import {failsMiserablyLambda} from "./constructs/lambdas/fails-miserably";
+import {errorLogger} from "./constructs/lambdas/error-logger";
+
 export interface CreateStackProps {
+    topics: AllSnsTopics;
 }
 
 export interface StackTopicProps {
@@ -11,25 +16,34 @@ export interface StackTopicProps {
 
 // tslint:disable-next-line:no-empty-interface
 interface E2EStackOutput {
+    tables: AllTables;
 }
 
-export const createStackTopics: (stack: CDK.Stack, p: StackTopicProps) => AllSnsTopics =
-    stack => {
-        // TODO: Step 2.1 - create an SNS Topic
-
-        return createTopics(stack);
-    };
-
 export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOutput =
-// @ts-ignore
-    (scope, {}) => {
-        // TODO: Step 2.1 - create an SNS Topic
-        // createTopics(scope);
-        // TODO: Step 2.2 - create DynamoDB Table
-        // createTables(scope);
+    (scope, {topics: {SNS_TOPIC_ERRORS}}) => {
+        const tables = createTables(scope);
 
-        // TODO: Step 2.3 - use the Resources above to create a lambda that has proper rights!
-        // createLambda(scope)({ envVars: { NODE_ENV: 'dev' } })(createSpyLambda({ spyTable })({ SNS_TOPIC_ERRORS }));
+        // TODO: Step 3.1 - Add fails miserably lambda
+        const {resourcesTable, errorsTable} = tables;
+        let lambdaprod1 = createLambda
+        (scope)
+        ({envVars: {NODE_ENV: 'dev'}})
+        (failsMiserablyLambda({resourcesTable})({SNS_TOPIC_ERRORS}));
 
-        return {};
+        let lambdaprod2 = createLambda
+        (scope)
+        ({envVars: {NODE_ENV: 'dev'}})
+        (errorLogger({errorsTable})({SNS_TOPIC_ERRORS}));
+
+        new CDK.CfnOutput(scope, `lambda-failsmiserably`, {
+            value: lambdaprod1.functionName,
+            exportName: `${scope.stackName}:Lambda:prod1`,
+        });
+        new CDK.CfnOutput(scope, `lambda-error-logger`, {
+            value: lambdaprod2.functionName,
+            exportName: `${scope.stackName}:Lambda:prod2`,
+        });
+
+
+        return {tables};
     };
