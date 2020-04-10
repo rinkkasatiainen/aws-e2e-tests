@@ -12,23 +12,30 @@ Previous steps:
    * [step-1](./step-1.md)
 
 ## Introduction to step goals
-To be able to test only the Serverless stack, we need ways to:
-   1) spy on _messages_ that are published on SNS Topics (see [TODO#Outline](todo.md))
-   
-On this step, we create an SNS Topic called **SNS_TOPIC_ERRORS** that is used 
-to send errors internally between lambdas. Then we create a lambda for dev/test environments that listens
-to this SNS Topic and pushes the messages to DynamoDB, to a **SPY_TABLE**. That table is used only in e2e 
-tests.
 
-There are no tests for this step, as this is tested by the test themselves.
+Learning goals are
+   * introduce CloudFormation Outputs (set the topic name)
+   * trigger a lambda function that will fail (and publish message to SNS)
+   * verify that error is stored to spy DB
+
 
 ## BEFORE : get ready for this step:
 To start with this step, do the following:
 
-   * `git reset --hard HEAD` # to remove the `cdk/bin/cdk.ts` file.
-   * `git checkout step-2`  
-   * `npm install`  # to install dependenencies
+   * `git reset --hard HEAD` 
+   * `git checkout step-3`  
+   * `npm install`  # to install dependencies
    * `npm run tsc:watch` to start watching changes on CDK stack files.
+   
+## Step 3: Deploy first 'production lambda' and test that
+
+### Step 3.1:  Create first production lambda
+
+We use create a folder 'dist' and to add lambdas there. Later, the dist folder will be automatically created when bundling 
+lambdas using Webpack.
+
+There is lambda `dist/fails-miserably.ts`. Let's add that to the stack -> got to e2e-stack.ts 
+   
 
 ## Step 2: create first Lambda, DynamoDB table, SNS Topic
 
