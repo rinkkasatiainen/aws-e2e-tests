@@ -4,3 +4,4 @@
 .python-version
 .whoami
 cdk.out
+cdk/bin/env.ts
