@@ -1,7 +1,8 @@
 // This is the way all CDK packages are imported.
 import * as CDK from '@aws-cdk/core';
+import { addTestResources } from '../dev/test-resources';
+import { createTopics } from '../lib/constructs/sns-topics';
 import { env } from './env';
-import { createStack } from "../lib/e2e-stack";
 
 // Create new CDK App
 const app = new CDK.App();
@@ -30,4 +31,6 @@ const stack = new E2EStack(app, `test-stack-${env}`, {
     tags: { aTag: 'aValue' },
 });
 
-createStack(stack, {})
+createTopics(stack);
+// Add test related resources here. Everything we need to set up tools to see what's happening inside.
+addTestResources(stack, { topics: {} });

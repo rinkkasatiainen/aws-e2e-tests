@@ -3,13 +3,15 @@ This repository is step by step guide in creating a serverless environment using
 
 If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
+To follow the progress, check out [TODO list](todo.md)
+
+Check the [Testing Strategy](test-strategy.md) to understand the end goals
+
 ## Introduction to step goals
 To be able to test only the Serverless stack, we need ways to:
-   1) fake outgoing HTTP requests (commands and queries)
-   2) spy on _messages_ that are published on SNS Topics
-   3) check what is happening on DB level.
+   1) spy on _messages_ that are published on SNS Topics (see [TODO#Outline](todo.md))
    
-On this step, we solve the issue number 2 - we create an SNS Topic called **SNS_TOPIC_ERRORS** that is used 
+On this step, we create an SNS Topic called **SNS_TOPIC_ERRORS** that is used 
 to send errors internally between lambdas. Then we create a lambda for dev/test environments that listens
 to this SNS Topic and pushes the messages to DynamoDB, to a **SPY_TABLE**. That table is used only in e2e 
 tests.
@@ -25,6 +27,12 @@ To start with this step, do the following:
    * `npm run tsc:watch` to start watching changes on CDK stack files.
 
 ## Step 2: create first Lambda, DynamoDB table, SNS Topic
+
+add region to your env.ts file
+```typescript 
+ // ..
+ export const region = 'eu-central-1'
+```
 
 ### Step 2.1 Create an SNS Topic
 
