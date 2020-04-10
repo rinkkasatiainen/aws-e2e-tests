@@ -61,6 +61,17 @@ Stack ARN:
 arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<id>
 ```
 
+#### Test SNS
+
+You can see the sns topic in AWS Console. Find Services -> SNS (or Simple Notification Service) and look for the created topic
+
+To test this, you can send this command in command line:
+
+```bash 
+   aws sns publish --message "{\"domain\": \"foo.bar.com\", \"error\": \"yes\"}" --topic-arn arn:aws:sns:eu-central-1:<AWS_ACCOUNT_ID>:sns_topic_errors-dev    
+```
+where you can copy-paste the topic-arn from AWS Console!
+
 
 ### Step 2.2 Create DynamoDB
 
