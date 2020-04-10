@@ -2,31 +2,12 @@
 
 This repository is step by step guide in creating a serverless environment using AWS CDK, while creating end2end tests and unit tests. 
 
-# Step 1: create CDK stack:
+If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-## create first stack
-
-To start, add a file 'cdk.json' with content:
-```json
-{
-  "app": "node cdk/bin/cdk.js"
-}
-```
-
-Then create a file 'cdk/bin/cdk.ts' with following content
-
-```
-
-```
-
-To follow the progress, check out [TODO list](todo.md)
-
-Check the [Testing Strategy](test-strategy.md) to understand the end goals
-
-## BEFORE:
+# Step 0: get ready for this step:
 To start with this step, do the following:
 
-   * `git checkout step-1`  
+   * `git checkout step-1`  # to install dependencies
    * `npm install`  # to install dependenencies
    * create file `cdk/bin/env.ts` with content
 ```typescript
@@ -36,9 +17,9 @@ export const env = `<your username, or something>`
 This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
 store all AWS environment specific details. 
 
-## Step 1: create CDK stack:
+# Step 1: create CDK stack:
 
-### create first stack
+## create first stack
 
 To start, add a file 'cdk.json' with content:
 ```json
@@ -92,19 +73,6 @@ test-stack: creating CloudFormation changeset...
 
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
 You can verify this from AWS Console -> Service CloudFormation -> Stacks
-
-## Steps before step-2
-
-To start with next step, do the following:
-```bash
-    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
-    git checkout step-2 # to install dependencies
-    npm install # to install dependenencies
-    run npm run tsc:watch to start watching changes on CDK stack files.
-```
-
-
-
 
 ## step 0: development environment
 
