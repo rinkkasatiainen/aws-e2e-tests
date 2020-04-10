@@ -186,9 +186,9 @@ Item {3}
 
 Hooray, you are ready for the next step!
 
-# Step 1: create CDK stack:
+## Step 1: create CDK stack:
 
-## create first stack
+### create first stack
 
 To start, add a file 'cdk.json' with content:
 ```json
@@ -242,6 +242,19 @@ test-stack: creating CloudFormation changeset...
 
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
 You can verify this from AWS Console -> Service CloudFormation -> Stacks
+
+## Steps before step-2
+
+To start with next step, do the following:
+```bash
+    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
+    git checkout step-2 # to install dependencies
+    npm install # to install dependenencies
+    run npm run tsc:watch to start watching changes on CDK stack files.
+```
+
+
+
 
 ## step 0: development environment
 
@@ -314,62 +327,12 @@ This step is ready, when running command
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
 
-later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
+later, you might want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
 
 ```bash
-    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
-    git checkout step-2 # to install dependencies
-    npm install # to install dependenencies
-    run npm run tsc:watch to start watching changes on CDK stack files.
+$ aws lambda list-functions --profile e2e
+{
+    "Functions": []
+}
 ```
 
-
-
-
-# Testing in AWS environment
-
-## End-2-end testing on this plugin.
-
-To understand the core of all testing, regarding to what and how, it is adviced (by Aki S.) to watch a great video by 
-Sandi Metz on [Magic Tricks on testing](https://www.youtube.com/watch?v=URSWYvyc42M). With that information, the 
-following applies
-
-### Testing quadrants
-
-Separating everything to either a query or a command, is the core of understanding what to test, and how.
-
-* Query / a function that has a return value
-* Command / a function that has a side-effect
-
-And testing these, needs to be done differently  
-
-```
-
-/--------------------+------------------+-------------------\
-|   type             |     QUERY        |    COMMAND        |
-+--------------------+------------------+-------------------+
-|  Incoming          |  Verify the      |  Verify direct    |
-|                    |  return value    |  side-effect      |
-+--------------------+------------------+-------------------+
-|  Sent to self      |     do not       |      do not       |
-|                    |      test        |       test        |
-+--------------------+------------------+-------------------+
-|  Outgoing          |     do not       |      verify       |
-|                    |      test        |    message is     |
-|                    |                  |       sent        |
-\--------------------+------------------+-------------------/
-```
-
-Taking this to AWS end-2-end testing, all the same applies.
-
-```
-
-incoming                              outgoing 
-   `           `----------------`     `==>
-    `==>      /                  \   `
-             /     AWS            \
-            /    Serverless        \
-           /     environment        \
-          /                          \
-         `----------------------------`
-```
