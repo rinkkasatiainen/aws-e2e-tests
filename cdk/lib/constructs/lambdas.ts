@@ -3,7 +3,6 @@ import * as Lambda from '@aws-cdk/aws-lambda';
 import { SnsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as Logs from '@aws-cdk/aws-logs';
 import * as CDK from '@aws-cdk/core';
-import * as path from 'path';
 
 export interface EnvVars {
     NODE_ENV: string;
@@ -17,28 +16,32 @@ export interface LambdaProps {
     triggers: SnsEventSource[];
     functionName: string;
     handler: string;
+    assetFolder: string;
 }
 
 const buildLambdaFunction: (scope: CDK.Stack, props: LambdaProps) => Lambda.Function =
     (scope, props) => {
+        // handler is used when building the Lambda Construct, functionName is used as base name
         const { handler, functionName } = props;
-        const { policies } = props;
+        const { policies, assetFolder } = props;
 
         const [filename, method] = handler.split('.');
         const id = `${scope.stackName}-${filename}-${method}`;
+        // create very specific name for lambda. Otherwise would user `id${randomID}. That, too, would be a good stragegy
         const lambdaName = `${scope.stackName}-${functionName}-${method}`;
 
-        // Add policies
+        // create a Role Construct
         const role: IAM.Role = new IAM.Role(scope, `LambdaExecutionRole4-${lambdaName}`, {
             assumedBy: new IAM.ServicePrincipal('lambda.amazonaws.com'),
         });
+        // add policies to the Role
         policies.forEach(p => role.addToPolicy(p));
 
-        // Create Lambda function!
+        // Create Lambda Construct!
         const lambda = new Lambda.Function(scope, id, {
             functionName: lambdaName,
             description: `${functionName}.${method} for testStack`,
-            code: Lambda.Code.fromAsset(path.join(__dirname, '../dev/lambdas')),
+            code: Lambda.Code.fromAsset(assetFolder),
             role,
             memorySize: 128,
             handler,
@@ -59,7 +62,7 @@ const buildLambdaFunction: (scope: CDK.Stack, props: LambdaProps) => Lambda.Func
         const { triggers } = props;
         (triggers || []).forEach( t => lambda.addEventSource(t));
 
-        // Add Lambda to CloudFormation Output. To be used in Tests
+        // Add Lambda to CloudFormation Output. To can be used in Tests, to warm up lambdas
         new CDK.CfnOutput(scope, `lambda-${lambdaName}`, {
             value: lambda.functionName,
             exportName: `${scope.stackName}:Lambda:${lambdaName}`,

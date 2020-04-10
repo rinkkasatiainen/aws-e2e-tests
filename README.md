@@ -113,7 +113,27 @@ arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
 
 ### Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB
 
-This is a function that takes on an SNS-message and pushes that to dynamodb. There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
+Deploying this requires bootstrapping again: ```cdk bootstrap```, as this uses lambdas that need to be uploaded to the stack.
+
+This is a function that takes on an SNS-message and pushes that to dynamodb. 
+There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
+
+The steps are as follows (and follows my experience on working with AWS): 
+   1) make first deployment with minimum rights (LOGS)
+       1. check that lambda exists in AWS Console -> Lambdas. Notice that it does not have any triggers
+   1) add trigger to the lambda ([file spy-lambda.ts](cdk/dev/constructs/spy-lambda.ts))
+       1. test, but still no trigger
+   1) add policy to allow lambda to be triggered by SNS
+       1. This now ask you, when deploying, if changes in policies is ok.
+       1. And seeing from the console, the trigger is now on the lambda 
+   1) test, by sending publishing the SNS message
+       1. seeing that there are no logs in CloudWatch.
+       1. To fix this, give rights to Logs -> deploy
+   1) test, by sending publishin the SNS message
+       1. notice error in logs saying: `SpyLambda-handler is not authorized to perform: dynamodb:PutItem on resource:`
+       1. to fix this, give rights to dynamoDB. And deploy.
+   1) notice, again an error in logs
+       1. Fix it, deploy and run test again.
 
 Now this is a big step, after which ```cdk diff``` should look like:
 

@@ -1,11 +1,6 @@
 import * as DynamoDB from '@aws-cdk/aws-dynamodb';
 import * as CDK from '@aws-cdk/core';
 
-// tslint:disable-next-line:no-empty-interface
-export interface StackTables {
-    // spyTable: DynamoDB.ITable;
-}
-
 interface CreateTableProps {
     tableName: string;
 }

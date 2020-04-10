@@ -1,9 +1,9 @@
 import * as CDK from '@aws-cdk/core';
-import { PossibleSnsTopics } from '../lib/constructs/sns-topics';
 
-// tslint:disable-next-line:no-empty-interface
+import { SpyLambdaTopics } from './constructs/spy-lambda';
+
 export interface TestResourcesProps {
-    topics: PossibleSnsTopics;
+    topics: SpyLambdaTopics;
 }
 
 // tslint:disable-next-line:no-empty-interface
