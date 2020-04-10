@@ -139,6 +139,17 @@ This step is ready, when running command
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
 
+## Steps before step-2
+
+To start with next step, do the following:
+```bash
+    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
+    git checkout step-2 # to install dependencies
+    npm install # to install dependenencies
+    run npm run tsc:watch to start watching changes on CDK stack files.
+```
+
+
 
 # Testing in AWS environment
 
