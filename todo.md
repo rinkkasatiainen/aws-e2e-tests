@@ -4,7 +4,7 @@ This contains things that will be learned during the workshop
 
 ## Outline
 
-   * create a new CDK Stack (step-1)
+   * ~~create a new CDK Stack (step-1)~~
    * create ways to spy on messages sent to SNS topics (step-2)
    * create a lambda that listens to ERROR topic and pushes entries to DynamoDB (step-3)
        * create e2e test for this
