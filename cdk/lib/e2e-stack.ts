@@ -1,14 +1,14 @@
 import * as CDK from '@aws-cdk/core';
 
 // tslint:disable-next-line:no-empty-interface
-export interface E2EStackProps {
+export interface CreateStackProps {
 }
 
 // tslint:disable-next-line:no-empty-interface
 interface E2EStackOutput {
 }
 
-export const createStack: (stack: CDK.Stack, p: E2EStackProps) => E2EStackOutput =
+export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOutput =
 // @ts-ignore
     (scope, {}) => {
         // TODO: Step 2.1 - create an SNS Topic
