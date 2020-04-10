@@ -1,54 +1,42 @@
 # In this file, the code is added that needs to be done in each step
 [back to readme.md](README.md)
 
-## Step 1:
+## Step 2:
 
-### cdk/bin/env.ts
-
-```typescript
-export const env = `<your username, or something>`
-```
-
-### cdk.json
-
-```json
-{
-  "app": "node cdk/bin/cdk.js"
-}
-```
-
-### cdk/bin/cdk.ts
+### lib/constructs/sns-topics.ts
 
 ```typescript
-// This is the way all CDK packages are imported.
+import * as SNS from '@aws-cdk/aws-sns';
 import * as CDK from '@aws-cdk/core';
-import { env } from './env';
+import { env } from '../../bin/env';
 
-// Create new CDK App
-const app = new CDK.App();
+export type SnsTopicNames = 'SNS_TOPIC_ERRORS';
 
-// Here is defined Stack Props that will be defined for Stack!
-interface E2EStackProps {
-    tags: {[key: string]: string};
+export type AllSnsTopics = {
+    [key in SnsTopicNames]: SNS.ITopic;
+};
+
+// TODO Step 2.1: Define topic Name here - should be one defined in AllSnsTopics
+// tslint:disable-next-line:no-empty-interface
+export interface SnsTopics extends AllSnsTopics {
+    SNS_TOPIC_ERRORS: SNS.ITopic;
 }
 
+const createTopic: (stack: CDK.Stack, id: string) => SNS.ITopic =
+    (stack, id) => {
+        const topicName = `${id}-${env}`;
 
-class E2EStack extends CDK.Stack {
-
-    // CDK uses `Construct`s that more often than not take three arguments when creating one:
-    // 1) the parent scope (which is a CDK Construct
-    // 2) unique ID, which has to be unique in the AWS Account, and sometimes globally in AWS (S3).
-    // 3) a set of props that can be defined (see above)
-    public constructor(parent: CDK.App, id: string, props: E2EStackProps) {
-        super(parent, id, {
-            tags: props.tags,
+        return new SNS.Topic(stack, topicName, {
+            topicName,
         });
-    }
-}
+    };
 
-// tslint:disable-next-line:no-unused-expression
-new E2EStack(app, `test-stack-${env}`, {
-    tags: { aTag: 'aValue' },
-});
+// TODO: Step 2.1. Use this to create all topics!
+export const createTopics: (stack: CDK.Stack) => SnsTopics =
+    stack => {
+        return {
+            SNS_TOPIC_ERRORS: createTopic(stack, `sns-topic-error`),
+        };
+    };
 
 ```
