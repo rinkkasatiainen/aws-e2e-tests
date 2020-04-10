@@ -4,10 +4,14 @@ This repository is step by step guide in creating a serverless environment using
 
 If you need help / copy-paste code, check file [step-tips.md](step-tips.md)
 
-# Step 0: get ready for this step:
+To follow the progress, check out [TODO list](todo.md)
+
+Check the [Testing Strategy](test-strategy.md) to understand the end goals
+
+## BEFORE:
 To start with this step, do the following:
 
-   * `git checkout step-1`  # to install dependencies
+   * `git checkout step-1`  
    * `npm install`  # to install dependenencies
    * create file `cdk/bin/env.ts` with content
 ```typescript
@@ -17,9 +21,9 @@ export const env = `<your username, or something>`
 This env file is added to `.gitignore`, and wont be overwritten when changing branches between steps. It is used to 
 store all AWS environment specific details. 
 
-# Step 1: create CDK stack:
+## Step 1: create CDK stack:
 
-## create first stack
+### create first stack
 
 To start, add a file 'cdk.json' with content:
 ```json
@@ -48,11 +52,11 @@ class E2EStack extends CDK.Stack {
 const stack = new E2EStack(app, `test-stack-${env}`);
 ```
 
-## compile typescript to Javascript for deployment
+### compile typescript to Javascript for deployment
 
 The typescript CDK stack needs to be compiled to JS. For that, execute command ```npm run tsc``` that does exactly that.
 
-## deploy
+### deploy
 
 To deploy stack to AWS, run `cdk deploy --profile e2e`
 
@@ -135,7 +139,12 @@ $ aws lambda list-functions --profile e2e
 
 ### AWS account
 
-You start by creating and AWS account or use existing. Also, setup your AWS profile configs according to what is expected. The last to parts (role_arn and mfa_serial are optional - used if you do a role jump to dev role)
+## step 0: development environment
+
+### AWS account
+
+You start by creating and AWS account or use existing. 
+Also, setup your AWS profile configs according to what is expected. 
 
 in `~/.aws/config` file the following should apply
 ```bash
@@ -143,6 +152,15 @@ in `~/.aws/config` file the following should apply
 region = eu-central-1
 output = json
 source_profile = e2e
+<<<<<<< HEAD
+=======
+```
+
+If you are using a role jump to access your account,
+```
+role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
+mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
+>>>>>>> 📝: updating step-1, adding TODO.md
 ```
 
 and `~/.aws/credentials`
@@ -184,15 +202,25 @@ activate newly created virtualenv
 install AWS CLI
 
 ```bash
-    pip install aws-cli
+    pip install awscli
 ```
 
 ## Test
 
 This step is ready, when running command 
 ```bash
-   cdk --profile=e2e list
+   npx cdk --profile=e2e list
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
 
+<<<<<<< HEAD
 
+=======
+later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
+
+```bash
+$ aws lambda list-functions --profile e2e
+{
+    "Functions": []
+}
+```
