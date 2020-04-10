@@ -5,7 +5,7 @@ import * as IAM from '@aws-cdk/aws-iam';
 export const policyForSns: (topicArns: string[]) => IAM.PolicyStatement =
     resources => {
         const policy = new IAM.PolicyStatement();
-        policy.addActions();
+        policy.addActions( 'sns:Publish');
         policy.addResources(...resources);
 
         return policy;
@@ -15,7 +15,7 @@ export const policyForSns: (topicArns: string[]) => IAM.PolicyStatement =
 export const policyForDynamoRW: (tableArns: string[]) => IAM.PolicyStatement =
     resources => {
         const policy = new IAM.PolicyStatement();
-        policy.addActions();
+        policy.addActions('dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:GetItem');
         policy.addResources(...resources);
 
         return policy;
@@ -25,7 +25,7 @@ export const policyForDynamoRW: (tableArns: string[]) => IAM.PolicyStatement =
 export const policyLogs: () => IAM.PolicyStatement =
     () => {
         const policy = new IAM.PolicyStatement();
-        policy.addActions();
+        policy.addActions('logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents');
         policy.addResources('arn:aws:logs:*:*:*');
 
         return policy;
