@@ -74,6 +74,17 @@ test-stack: creating CloudFormation changeset...
 This step is done when the stack is created successfully. This might require you to have certain AWS access rights.
 You can verify this from AWS Console -> Service CloudFormation -> Stacks
 
+## Steps before step-2
+
+To start with next step, do the following:
+```bash
+    git reset --hard HEAD # to remove the cdk/bin/cdk.ts file.
+    git checkout step-2 # to install dependencies
+    npm install # to install dependenencies
+    run npm run tsc:watch to start watching changes on CDK stack files.
+```
+
+
 # step 0: development environment
 
 ### Setup direnv
@@ -175,3 +186,13 @@ install AWS CLI
 ```bash
     pip install aws-cli
 ```
+
+## Test
+
+This step is ready, when running command 
+```bash
+   cdk --profile=e2e list
+```
+fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
+
+
