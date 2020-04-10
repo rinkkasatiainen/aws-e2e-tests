@@ -17,19 +17,17 @@ tests.
 
 There are no tests for this step, as this is tested by the test themselves.
 
-# BEFORE : get ready for this step:
+## BEFORE : get ready for this step:
 To start with this step, do the following:
 
    * `git reset --hard HEAD` # to remove the `cdk/bin/cdk.ts` file.
-   * `git checkout step-2`  # to install dependencies
+   * `git checkout step-2`  
    * `npm install`  # to install dependenencies
-   * run `npm run tsc:watch` to start watching changes on CDK stack files.
+   * `npm run tsc:watch` to start watching changes on CDK stack files.
 
-# Step 2: create first Lambda, DynamoDB table, SNS Topic
+## Step 2: create first Lambda, DynamoDB table, SNS Topic
 
-
-
-## Step 2.1 Create an SNS Topic
+### Step 2.1 Create an SNS Topic
 
 open cdk.ts and add SNS topic creation there.. 
 
@@ -65,7 +63,7 @@ arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<id>
 ```
 
 
-## Step 2.2 Create DynamoDB
+### Step 2.2 Create DynamoDB
 
 Add DynamoDB table to store things spied on.
 
@@ -94,7 +92,7 @@ Stack ARN:
 arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
 ```
 
-## Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB
+### Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB
 
 This is a function that takes on an SNS-message and pushes that to dynamodb. There exists already lambda implementation. In this step, the only thing needed is to add that to the stack.
 
@@ -185,6 +183,12 @@ Item {3}
 ```
 
 Hooray, you are ready for the next step!
+
+## BEFORE step-3
+
+<to be defined>
+
+
 
 ## Step 1: create CDK stack:
 
