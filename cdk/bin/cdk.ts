@@ -31,6 +31,6 @@ const stack = new E2EStack(app, `test-stack-${env}`, {
     tags: { aTag: 'aValue' },
 });
 
-createTopics(stack);
+const topics = createTopics(stack);
 // Add test related resources here. Everything we need to set up tools to see what's happening inside.
-addTestResources(stack, { topics: {} });
+addTestResources(stack, { topics });

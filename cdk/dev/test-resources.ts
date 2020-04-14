@@ -1,5 +1,7 @@
 import * as CDK from '@aws-cdk/core';
 
+import { env } from '../bin/env';
+import { createTable } from '../lib/constructs/dynamodb';
 import { SpyLambdaTopics } from './constructs/spy-lambda';
 
 export interface TestResourcesProps {
@@ -14,9 +16,9 @@ export const addTestResources: (stack: CDK.Stack, p: TestResourcesProps) => E2ES
 // @ts-ignore
     (scope, {}) => {
         // TODO: Step 2.2 - define spyTableName that uses your 'env' variable
-        // const spyTableName = `XXYYZZ-${env}`
+        const spyTableName = `spytable-${env}`;
         // TODO: Step 2.2 - create DynamoDB Table
-        // createTable(scope, spyTableName, { tableName: spyTableName });
+        createTable(scope, spyTableName, { tableName: spyTableName });
 
         // TODO: Step 2.3 - use the Resources above to create a lambda that has proper rights!
         // createLambda(scope)({ envVars: { NODE_ENV: 'dev' } })(createSpyLambda({ spyTable })({ SNS_TOPIC_ERRORS }));
