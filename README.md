@@ -7,6 +7,10 @@ To follow the progress, check out [TODO list](todo.md)
 
 Check the [Testing Strategy](test-strategy.md) to understand the end goals
 
+Previous steps:
+   * [step-0](./step-0.md)
+   * [step-1](./step-1.md)
+
 ## Introduction to step goals
 To be able to test only the Serverless stack, we need ways to:
    1) spy on _messages_ that are published on SNS Topics (see [TODO#Outline](todo.md))
