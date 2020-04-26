@@ -11,7 +11,7 @@ import {testSetup, TestSetup} from '../helpers/setup';
 import {testSpy, TestSpy} from '../helpers/spy';
 import {fetchStackConfiguration, region, StackConfig} from '../test-aws-config';
 
-mocha();
+// mocha();
 // tslint:disable:no-unused-expression
 // tslint:disable:variable-name
 // tslint:disable:no-invalid-this

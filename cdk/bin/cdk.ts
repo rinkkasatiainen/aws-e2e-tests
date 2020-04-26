@@ -37,6 +37,12 @@ addCfnOutput(stack)('ErrorsTable')({
     exportName: `${stack.stackName}:Table:ErrorsTable`,
 })
 
+const { resourcesTable, errorsTable } = tables;
+addCfnOutput(stack)('ErrorsTable')({
+    value: errorsTable.tableName,
+    exportName: `${stack.stackName}:Table:ErrorsTable`,
+})
+
 addCfnOutput(stack)('ResourcesTable')({
     value: resourcesTable.tableName,
     exportName: `${stack.stackName}:Table:ResourcesTable`,
