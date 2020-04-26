@@ -18,6 +18,7 @@ To start this, you need access to an AWS Account, both to Console and programmat
 
 Make sure you have [direnv](https://direnv.net/) installed.
 
+
 Then you have 2 options, 
    1)  copy [example 1 .envrc.example file](./.envrc.example) as .envrc file, and set your credentials there.
    2)  copy [.envrc.script](./.envrc.script) as .envrc and create file .aws_profile with your profile information
