@@ -26,7 +26,6 @@ const stack = new E2EStack(app, `test-stack-${env}`, {
 });
 
 const topics = createTopics(stack);
-addTestResources(stack, { topics });
 
 // TODO: Step 3.1 - add fails-miserably code to the stack.
 /* const { tables } = */ createStack(stack, { topics });
@@ -36,6 +35,9 @@ addCfnOutput(stack)('ErrorsTable')({
     value: errorsTable.tableName,
     exportName: `${stack.stackName}:Table:ErrorsTable`,
 })
+
+addTestResources(stack, { topics, tables });
+
 
 const { resourcesTable, errorsTable } = tables;
 addCfnOutput(stack)('ErrorsTable')({

@@ -11,7 +11,24 @@ export const policyForSns: (topicArns: string[]) => IAM.PolicyStatement =
         return policy;
     };
 
-// TODO: Step 2.3 Give Access Rights of 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:GetItem'
+export const policyForDynamoScan: (tableArns: string[]) => IAM.PolicyStatement =
+    resources => {
+        const policy = new IAM.PolicyStatement();
+        policy.addActions('dynamodb:Scan');
+        policy.addResources(...resources);
+
+        return policy;
+    };
+
+export const policyForDynamoDelete: (tableArns: string[]) => IAM.PolicyStatement =
+    resources => {
+        const policy = new IAM.PolicyStatement();
+        policy.addActions('dynamodb:DeleteItem');
+        policy.addResources(...resources);
+
+        return policy;
+    };
+
 export const policyForDynamoRW: (tableArns: string[]) => IAM.PolicyStatement =
     resources => {
         const policy = new IAM.PolicyStatement();

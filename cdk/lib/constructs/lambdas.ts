@@ -62,12 +62,6 @@ const buildLambdaFunction: (scope: CDK.Stack, props: LambdaProps) => Lambda.Func
         const { triggers } = props;
         (triggers || []).forEach( t => lambda.addEventSource(t));
 
-        // Add Lambda to CloudFormation Output. To can be used in Tests, to warm up lambdas
-        new CDK.CfnOutput(scope, `lambda-${lambdaName}`, {
-            value: lambda.functionName,
-            exportName: `${scope.stackName}:Lambda:${lambdaName}`,
-        });
-
         return lambda;
     };
 
