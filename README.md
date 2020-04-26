@@ -14,6 +14,51 @@ To start this, you need access to an AWS Account, both to Console and programmat
 
 ## step 0: development environment
 
+### Setup direnv
+
+Make sure you have [direnv](https://direnv.net/) installed.
+
+Then you have 2 options, 
+   1)  copy [example 1 .envrc.example file](./.envrc.example) as .envrc file, and set your credentials there.
+   2)  copy [.envrc.script](./.envrc.script) as .envrc and create file .aws_profile with your profile information
+       * you could also encrypt that file contents with AES_ENC_KEY (you need to setup that env variable) to file 
+       .aws_profile.enc, which would then be used to set up your AWS environment variables.   
+
+When direnv is used correctly,  you should see
+
+```bash
+   $ direnv allow
+   direnv: export +AWS_ACCESS_KEY_ID +AWS_DEFAULT_REGION +AWS_SECRET_ACCESS_KEY +AWS_SESSION_TOKEN_DURATION
+```
+and you'll see the AWS keys in your environment variables, when on the given directory:
+
+```bash
+   $ env | grep AWS
+```
+
+### Install AWS-CLI (version 2)
+
+To install AWS CLI, follow the [official install instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+
+## Test
+
+This step is ready, when running command 
+```bash
+   npx cdk --profile=e2e list
+```
+fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
+
+later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
+
+```bash
+$ aws lambda list-functions --profile e2e
+{
+    "Functions": []
+}
+```
+
+## Harder way - using AWS profiles and installing AWS CLI version 1
+
 ### AWS account
 
 You start by creating and AWS account or use existing. 
@@ -27,12 +72,6 @@ output = json
 source_profile = e2e
 ```
 
-If you are using a role jump to access your account,
-```
-role_arn = arn:aws:iam::<AWS ACCOUNT FOR ROLE>:role/<ROLENAME>
-mfa_serial = arn:aws:iam::<AWS IAM ACCOUNT>:mfa/<USERNAME>
-```
-
 and `~/.aws/credentials`
 the following details you get on your AWS Console -> IAM -> Security Credentials
 ```bash
@@ -41,7 +80,8 @@ aws_access_key_id=<access key id>
 aws_secret_access_key=<secret access key>
 ```
 
-### Install AWS-CLI. 
+
+### Install AWS-CLI (version 1 - depracated). 
 
 To do stuff on command line, we need AWS Command Line Interface. To install that, I've used the following procedure 
 
@@ -75,19 +115,3 @@ install AWS CLI
     pip install awscli
 ```
 
-## Test
-
-This step is ready, when running command 
-```bash
-   npx cdk --profile=e2e list
-```
-fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
-
-later, you migth want to install CDK as global node module by running `npm install -g cdk` after which you can run cdk commands without _npx_: `cdk --profile=e2e list`
-
-```bash
-$ aws lambda list-functions --profile e2e
-{
-    "Functions": []
-}
-```
