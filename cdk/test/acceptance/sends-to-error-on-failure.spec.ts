@@ -50,7 +50,6 @@ describe('Scaffold - first E2E test', () => {
 
 
         it('should take data from dynamoDB and push that to error Topic', async () => {
-
             // Arrange
             // put data to DynamoDB!!
             await setup.addResource({ domain, data: { error: domain } }).save();
@@ -61,7 +60,7 @@ describe('Scaffold - first E2E test', () => {
 
 
             // Assert. -> Wait for some time for a lambda to push events to SNS & spy to push to DynamoDb
-            const res = await spy.snsTopic('errors-dev').for(domain);
+            const res = await spy.snsTopic(`errors-${env}`).for(domain);
             expect(res.Item?.data).to.eql({ foo: domain });
 
             return new Promise(resolve => resolve());

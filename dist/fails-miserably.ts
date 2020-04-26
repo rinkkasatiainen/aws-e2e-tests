@@ -6,17 +6,21 @@ interface Message {
     data: { error: string; bar: string; };
 }
 
+let tableName = process.env.RESOURCE_TABLE_NAME || 'a-random-table-that-probably-does-not-exist';
+
+// this lambda is invoked 'by hand', or via ApiGW, and the event will contain an entry {domain: string}
+
 export const handler: Handler<{ domain: string }, { statusCode: number, body: string }> =
     async (event, context) => {
         console.log('Lambda that fails miserably', event, context);
 
         const region = context.invokedFunctionArn.split(':')[3];
         const documentClient = new DynamoDB.DocumentClient({ region });
-        const { domain } = event;
 
+        const { domain } = event;
         if (domain) {
             const input: DynamoDB.DocumentClient.GetItemInput = {
-                TableName: process.env.RESOURCE_TABLE_NAME || 'a-random-table-that-probably-does-not-exist',
+                TableName: tableName,
                 Key: {
                     domain,
                 },
