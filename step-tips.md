@@ -1,169 +1,93 @@
 # In this file, the code is added that needs to be done in each step
 [back to readme.md](README.md)
 
-## Step 2:
+## Step 3.1:
 
-### lib/constructs/sns-topics.ts
-
-### 'test-resouces'
-
+### `cdk.ts`
+create stack in cdk.ts.
 ```typescript
-import * as CDK from '@aws-cdk/core';
-
-import { env } from '../bin/env';
-import { createTable } from '../lib/constructs/dynamodb';
-import { createLambda } from '../lib/constructs/lambdas';
-import { createSpyLambda, SpyLambdaTopics } from './constructs/spy-lambda';
-
-export interface TestResourcesProps {
-    topics: SpyLambdaTopics;
-}
-
-// tslint:disable-next-line:no-empty-interface
-interface E2EStackOutput {
-}
-
-export const addTestResources: (stack: CDK.Stack, p: TestResourcesProps) => E2EStackOutput =
-// @ts-ignore
-    (scope, { topics }) => {
-        // TODO: Step 2.2 - define spyTableName that uses your 'env' variable
-        const spyTableName = `spy-table-${env}`;
-        // TODO: Step 2.2 - create DynamoDB Table
-        const spyTable = createTable(scope, spyTableName, { tableName: spyTableName });
-
-        const { SNS_TOPIC_ERRORS } = topics;
-        // TODO: Step 2.3 - use the Resources above to create a lambda that has proper rights!
-        createLambda(scope)({ envVars: { NODE_ENV: 'dev' } })(createSpyLambda({ spyTable })({ SNS_TOPIC_ERRORS }));
-
-        return {};
-    };
-
+// TODO: Step 3.1 - add fails-miserably code to the stack.
+ const { tables } =  createStack(stack, { topics });
 ```
 
-### 'spy-lambda.ts'
+### `e2e-stack.ts`
+
 
 ```typescript
+export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOutput =
+    (scope, { topics: { SNS_TOPIC_ERRORS } }) => {
+        const tables = createTables(scope);
 
-import * as DynamoDB from '@aws-cdk/aws-dynamodb';
-import * as IAM from '@aws-cdk/aws-iam';
-import { SnsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as SNS from '@aws-cdk/aws-sns';
-import path from 'path';
+        // TODO: Step 3.1 - Add fails miserably lambda
+        const { resourcesTable } = tables;
+        createLambda
+        (scope)
+        ({ envVars: { NODE_ENV: 'dev' } })
+        (failsMiserablyLambda({ resourcesTable })({ SNS_TOPIC_ERRORS }));createLambda
+    
+        return tables
+    };
+```
 
-import { LambdaProps } from '../../lib/constructs/lambdas';
-import { policyForDynamoRW, policyForSns, policyLogs } from '../../lib/constructs/policies';
-import { PossibleSnsTopics } from '../../lib/constructs/sns-topics';
+### 'cdk/lib/constructs/lambdas/fails-miserably.ts'
 
+Create the lambda props, as in step 2.3. 
+
+```typescript
 type LambdaCreator =
-    (x: NeededTables) => (y: SpyLambdaTopics) => LambdaProps;
+    (x: NeededTables) => (y: Topics) => LambdaProps;
 
-interface NeededTables {
-    spyTable: DynamoDB.ITable;
+interface NeededTables extends PossibleTables {
+    resourcesTable: DynamoDB.ITable;
 }
 
-export interface SpyLambdaTopics extends PossibleSnsTopics {
+export interface Topics extends PossibleSnsTopics {
     SNS_TOPIC_ERRORS: SNS.ITopic;
 }
 
+export const failsMiserablyLambda: LambdaCreator =
+    ({ resourcesTable }) => ({ SNS_TOPIC_ERRORS }) => {
 
-// TODO: Step 2.3. Create a LambdaProps that describe a lambda that is being created to AWS
-export const createSpyLambda: LambdaCreator =
-    ({ spyTable }) => ({ SNS_TOPIC_ERRORS }) => {
-        // TODO: Step 2.3 Add policies for 'SNS, DynamoDB and logs'
         const policies: IAM.PolicyStatement[] = [
             policyForSns([SNS_TOPIC_ERRORS.topicArn]),
             policyLogs(),
-            policyForDynamoRW([spyTable.tableArn]),
+            policyForDynamoRW([resourcesTable.tableArn]),
         ];
 
-        // TODO: Step 2.3. Define environment vars used by the lambda!
+        // Step 3.1: Add envVars that the labda uses / see dist/fails-miserably.ts
         const environmentVars = {
             NODE_ENV: 'dev',
-            SPY_TABLE_NAME: spyTable.tableName,
+            RESOURCE_TABLE_NAME: resourcesTable.tableName,
+            ERRORS_SNS_ARN: SNS_TOPIC_ERRORS.topicArn,
         };
 
-        // TODO: Step 2.3: Add an SnsEventSource trigger for the error topic!
-        const triggers: SnsEventSource[] = [ new SnsEventSource(SNS_TOPIC_ERRORS)];
+        // Step 3.1: no event sources
+        const triggers: SnsEventSource[] = [];
 
         return {
-            assetFolder: path.join(__dirname, '../lambdas'),
+            assetFolder: path.join(__dirname, '../../../../dist'),
             policies,
             environmentVars,
             triggers,
-            functionName: 'SpyLambda',
-            handler: 'sns-listener.handler',
+            functionName: 'FailsMiserably',
+            handler: 'fails-miserably.handler',
         };
     };
 ```
 
-### 'policies.ts'
+
+## Step 3.2
+
+To know table names in the tests, that can have whatever is defined in the CDK stack, we can create CloudFormation Outputs to store 
+tablenames"
+
+### `cdk.ts`
 
 ```typescript
-import * as IAM from '@aws-cdk/aws-iam';
-
-
-// TODO: Step 2.3 Give Access Rights of 'sns:Publish'
-export const policyForSns: (topicArns: string[]) => IAM.PolicyStatement =
-    resources => {
-        const policy = new IAM.PolicyStatement();
-        policy.addActions( 'sns:Publish');
-        policy.addResources(...resources);
-
-        return policy;
-    };
-
-// TODO: Step 2.3 Give Access Rights of 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:GetItem'
-export const policyForDynamoRW: (tableArns: string[]) => IAM.PolicyStatement =
-    resources => {
-        const policy = new IAM.PolicyStatement();
-        policy.addActions('dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:GetItem');
-        policy.addResources(...resources);
-
-        return policy;
-    };
-
-// TODO: Step 2.3 Give Access Rights of 'logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'
-export const policyLogs: () => IAM.PolicyStatement =
-    () => {
-        const policy = new IAM.PolicyStatement();
-        policy.addActions('logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents');
-        policy.addResources('arn:aws:logs:*:*:*');
-
-        return policy;
-    };
-```
-```typescript
-import * as SNS from '@aws-cdk/aws-sns';
-import * as CDK from '@aws-cdk/core';
-import { env } from '../../bin/env';
-
-export type SnsTopicNames = 'SNS_TOPIC_ERRORS';
-
-export type PossibleSnsTopics = {
-    [key in SnsTopicNames]?: SNS.ITopic;
-};
-
-// tslint:disable-next-line:no-empty-interface
-export type AllSnsTopics = {
-    [key in SnsTopicNames]: SNS.ITopic;
-};
-
-// TODO Step 2.1: Define topic Name here - should be one defined in AllSnsTopics
-
-const createTopic: (stack: CDK.Stack, id: string) => SNS.ITopic =
-    (stack, id) => {
-        const topicName = `${id}-${env}`;
-
-        return new SNS.Topic(stack, topicName, {
-            topicName,
-        });
-    };
-
-// TODO: Step 2.1. Use this to create all topics!
-export const createTopics: (stack: CDK.Stack) => AllSnsTopics =
-    stack => {
-        return { SNS_TOPIC_ERRORS: createTopic(stack, 'errors') };
-    };
-
-
+// Add ResourcesTable to CloudFormatioin so that it can be fetched at test case!
+const { resourcesTable } = tables;
+addCfnOutput(stack)('ResourcesTable')({
+    value: resourcesTable.tableName,
+    exportName: `${stack.stackName}:Table:ResourcesTable`,
+});
 ```

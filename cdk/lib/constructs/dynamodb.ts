@@ -6,7 +6,10 @@ interface CreateTableProps {
     tableName: string;
 }
 
-export type TableNames = 'resourcesTable';
+export interface PossibleTables {
+    'resourcesTable'?: DynamoDB.ITable
+    'errorsTable'?: DynamoDB.ITable
+};
 
 export type PossibleTables = {
     [key in TableNames]?: DynamoDB.ITable;
