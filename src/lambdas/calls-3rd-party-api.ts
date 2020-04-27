@@ -1,6 +1,6 @@
 import {Handler, SNSEvent} from 'aws-lambda';
 import {DynamoDB, SNS} from 'aws-sdk';
-import * as http from "http";
+import axios from 'axios';
 
 interface Message {
     domain: string;
@@ -8,33 +8,25 @@ interface Message {
 }
 
 const callFunc: (domain: string) => Promise<any> =
-    domain => {
-        return new Promise((resolve, reject) => {
-            const options = {
-                host: domain,
-                path: '/success/api',
-                method: 'POST'
-            }
-            const req = http.request(options, (res) => {
-                console.log(res)
-                resolve(res)
-            })
-            req.on('error', (e) => {
-                reject({error: `RANDOM err, ${e}`})
-            })
-
-            req.write('');
-            req.end();
-        });
+    async url => {
+        try {
+            const response = await axios.get(`${url}/success/api`);
+            const success = response.data;
+            console.log(success);
+            return {success}
+        } catch (error) {
+            console.log(error);
+            return {error}
+        }
     }
 
 export const handler: Handler<SNSEvent, { statusCode: number, body: string }> =
     async (event, context) => {
-        console.log('Lambda that calls 3rd party API', event, context);
+        console.log('Lambda that calls 3rd party API', JSON.stringify(event), context);
         const region = context.invokedFunctionArn.split(':')[3];
         const documentClient = new DynamoDB.DocumentClient({region});
 
-        for (const record of event.Records) {
+        for (const record of (event.Records || [])) {
             const {domain} = JSON.parse(record.Sns.Message);
 
             if (domain) {
