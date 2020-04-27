@@ -37,7 +37,7 @@ export const failsMiserablyLambda: LambdaCreator =
         const triggers: SnsEventSource[] = [];
 
         return {
-            assetFolder: path.join(__dirname, '../../../../dist'),
+            assetFolder: path.join(__dirname, '../../../../published'),
             policies,
             environmentVars,
             triggers,

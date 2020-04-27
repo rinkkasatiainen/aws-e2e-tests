@@ -5,8 +5,8 @@
 .whoami
 cdk.out
 cdk/bin/env.ts
-cdk/**/*.d.ts
-cdk/**/*.js
-cdk/bin/env.ts
-dist/*.d.ts
-dist/*.js
+.aws_profile.enc
+.envrc
+.python-version
+.whoami
+dist

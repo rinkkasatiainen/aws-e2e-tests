@@ -16,12 +16,13 @@ interface NeededTables extends PossibleTables {
 }
 
 export interface Topics extends PossibleSnsTopics {
+    SNS_START: SNS.ITopic;
     SNS_TOPIC_ERRORS: SNS.ITopic;
     SNS_TOPIC_SUCCESS: SNS.ITopic;
 }
 
 export const calls3rdPartyApi: LambdaCreator =
-    envVars => ({resourcesTable}) => ({SNS_TOPIC_ERRORS, SNS_TOPIC_SUCCESS}) => {
+    envVars => ({resourcesTable}) => ({SNS_TOPIC_ERRORS, SNS_TOPIC_SUCCESS, SNS_START}) => {
 
         const policies: IAM.PolicyStatement[] = [
             policyLogs(),
@@ -29,23 +30,21 @@ export const calls3rdPartyApi: LambdaCreator =
             policyForDynamoRW([resourcesTable.tableArn]),
         ];
 
-        // Step 3.1: Add envVars that the labda uses / see dist/fails-miserably.ts
         const environmentVars = {
             ...envVars,
-            ERRORS_TABLE: resourcesTable.tableName,
+            RESOURCE_TABLE_NAME: resourcesTable.tableName,
             ERRORS_SNS_ARN: SNS_TOPIC_ERRORS.topicArn,
             SUCCESS_SNS_ARN: SNS_TOPIC_ERRORS.topicArn,
         };
 
-        // Step 3.1: no event sources
-        const triggers: SnsEventSource[] = [new SnsEventSource(SNS_TOPIC_ERRORS)];
+        const triggers: SnsEventSource[] = [ new SnsEventSource(SNS_START)];
 
         return {
-            assetFolder: path.join(__dirname, '../../../../dist'),
+            assetFolder: path.join(__dirname, '../../../../published'),
             policies,
             environmentVars,
             triggers,
             functionName: 'Calls3rdParty',
-            handler: 'calls-3rd-party-api.sync',
+            handler: 'calls-3rd-party-api.handler',
         };
     };

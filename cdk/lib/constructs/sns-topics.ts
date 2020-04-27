@@ -5,6 +5,7 @@ import {env} from "../../bin/env";
 export type PossibleSnsTopics = {
     SNS_TOPIC_ERRORS?: SNS.ITopic;
     SNS_TOPIC_SUCCESS?: SNS.ITopic;
+    SNS_START?: SNS.ITopic;
 };
 
 export type SnsTopicNames = keyof PossibleSnsTopics;

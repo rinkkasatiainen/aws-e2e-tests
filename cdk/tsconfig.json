@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "outDir": "../dist/cdk",
+    "paths": {
+      "*": [
+        "*",
+        "../node_modules/*",
+        "test/types/*"
+      ]
+    }
+  },
+  "include": [
+    "./bin/cdk.ts",
+    "./dev/lambdas/*.ts",
+    "./test/acceptance/*.ts"
+  ],
+  "exclude": [
+  ]
+}

@@ -12,7 +12,7 @@ const callFunc: (domain: string) => Promise<any> =
         return new Promise((resolve, reject) => {
             const options = {
                 host: domain,
-                path: '/a/random/path/that/is/used',
+                path: '/success/api',
                 method: 'POST'
             }
             const req = http.request(options, (res) => {

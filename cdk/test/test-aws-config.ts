@@ -5,8 +5,8 @@ export const region: string = process.env.DEFAULT_AWS_REGION || process.env.AWS_
 export type StackConfigKeys = 'snsErrorTopic' | 'ResourcesTable' | 'SpyTableName' | 'ErrorsTable' | 'lambdaThatFails';
 
 export type StackConfigProps = { [key in StackConfigKeys]: string };
-
 export interface LambdaNames {
+
     lambdaNames: string[];
 }
 
