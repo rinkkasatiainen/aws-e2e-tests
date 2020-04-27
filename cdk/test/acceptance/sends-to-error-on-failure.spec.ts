@@ -56,7 +56,7 @@ describe('Scaffold - first E2E test', () => {
             console.log("added test data")
 
             // Act --> Invoke the function
-            const lambdaName = stackConfig.lambdateststackdevFailsMiserablyhandler;
+            const lambdaName = stackConfig.lambdafailsmiserably;
             await execute.invokeLambda({FunctionName: lambdaName, payloadAsJson: {domain}});
             console.log("invoked function")
 
@@ -75,7 +75,7 @@ describe('Scaffold - first E2E test', () => {
             console.log("added test data")
 
             // Act --> Invoke the function
-            const lambdaName = stackConfig.lambdateststackdevFailsMiserablyhandler;
+            const lambdaName = stackConfig.lambdafailsmiserably
             await execute.invokeLambda({FunctionName: lambdaName, payloadAsJson: {domain}});
             console.log("invoked function")
 

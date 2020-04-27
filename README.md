@@ -21,6 +21,11 @@ Learning goals are
         * environment variable
         * in dynamoDB entry
         * as parameter from SNS Event
+   * create a test case where 
+        1) call function by publishing to 'start' SNS topic
+        2) should succeed -> publish to 'success' SNS topic. Spy this!
+   * create a test case where
+        1) api call fails. / this need updating fakes, and deploying to prod. 
 
 ## BEFORE : get ready for this step:
 To start with this step, do the following:
@@ -30,9 +35,9 @@ To start with this step, do the following:
    * `npm install`  # to install dependencies
    * `npm run tsc:watch` to start watching changes on CDK stack files.
    
-## Step 3: Deploy first 'production lambda' and test that
+## Step 4: Deploy first 'production lambda' and test that
 
-### Step 3.1:  Create first production lambda
+### Step 4.1:  Create first production lambda
 
 We use create a folder 'dist' and to add lambdas there. Later, the dist folder will be automatically created when bundling 
 lambdas using Webpack.
@@ -51,7 +56,7 @@ $
 ```
 
 
-### Step 3.2 - Create test
+### Step 4.2 - Create test
 
 Run the test with `npm run test:e2e` and see it fail. It fails because the test does not know the Table Name. 
 It's not in the StackConfig.

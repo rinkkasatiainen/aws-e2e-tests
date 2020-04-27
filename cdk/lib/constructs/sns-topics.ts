@@ -1,10 +1,11 @@
 import * as SNS from '@aws-cdk/aws-sns';
 import * as CDK from '@aws-cdk/core';
-import { env } from '../../bin/env';
+import {env} from '../../bin/env';
 
 export type PossibleSnsTopics = {
     SNS_TOPIC_ERRORS?: SNS.ITopic;
     SNS_TOPIC_SUCCESS?: SNS.ITopic;
+    SNS_START?: SNS.ITopic;
 };
 
 export type SnsTopicNames = keyof PossibleSnsTopics;
@@ -26,7 +27,7 @@ export const createTopics: (stack: CDK.Stack) => AllSnsTopics =
     stack => {
         return {
             SNS_TOPIC_ERRORS: createTopic(stack, 'errors'),
-            SNS_TOPIC_SUCCESS: createTopic(stack, 'success')
-
+            SNS_TOPIC_SUCCESS: createTopic(stack, 'success'),
+            SNS_START: createTopic(stack, 'start'),
         };
     };

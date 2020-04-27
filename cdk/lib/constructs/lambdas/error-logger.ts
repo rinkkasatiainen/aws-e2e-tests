@@ -39,7 +39,7 @@ export const errorLogger: LambdaCreator =
         const triggers: SnsEventSource[] = [ new SnsEventSource(SNS_TOPIC_ERRORS)];
 
         return {
-            assetFolder: path.join(__dirname, '../../../../dist'),
+            assetFolder: path.join(__dirname, '../../../../published'),
             policies,
             environmentVars,
             triggers,

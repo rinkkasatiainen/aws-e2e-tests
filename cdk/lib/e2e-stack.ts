@@ -22,7 +22,7 @@ interface E2EStackOutput {
 }
 
 export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOutput =
-    (scope, {topics: {SNS_TOPIC_ERRORS, SNS_TOPIC_SUCCESS}, envVars}) => {
+    (scope, {topics: {SNS_TOPIC_ERRORS, SNS_TOPIC_SUCCESS, SNS_START}, envVars}) => {
         const tables = createTables(scope);
 
         // TODO: Step 3.1 - Add fails miserably lambda
@@ -37,7 +37,7 @@ export const createStack: (stack: CDK.Stack, p: CreateStackProps) => E2EStackOut
 
         let lambdaprod3 = createLambda(scope)
         ({envVars})
-        (calls3rdPartyApi(envVars)({resourcesTable})({SNS_TOPIC_ERRORS, SNS_TOPIC_SUCCESS}));
+        (calls3rdPartyApi(envVars)({resourcesTable})({SNS_TOPIC_ERRORS, SNS_TOPIC_SUCCESS, SNS_START}));
 
         new CDK.CfnOutput(scope, `lambda-failsmiserably`, {
             value: lambdaprod1.functionName,

@@ -11,17 +11,12 @@ export interface PossibleTables {
     'errorsTable'?: DynamoDB.ITable
 };
 
-export type PossibleTables = {
-    [key in TableNames]?: DynamoDB.ITable;
-};
+export type TableNames = keyof PossibleTables;
 
-// tslint:disable-next-line:no-empty-interface
 export type AllTables = {
     [key in TableNames]: DynamoDB.ITable;
 };
 
-
-// TODO: Step 2.2 Use this helper to create the table
 export const createTable: (scope: CDK.Stack, id: string, props: CreateTableProps) => DynamoDB.ITable =
     (scope, id, props) =>
         new DynamoDB.Table(scope, id, {
@@ -30,15 +25,12 @@ export const createTable: (scope: CDK.Stack, id: string, props: CreateTableProps
             tableName: props.tableName,
         });
 
-// TODO: Step 3.1 Use this helper to create the new table - define key where it's used
 const createTableWith:
     (scope: CDK.Stack, id: TableNames, propProvider: (tableName: string) => DynamoDB.TableProps) =>
         DynamoDB.ITable =
     (scope, id, props) =>
         new DynamoDB.Table(scope, id, props(`${ id }-${ env }`));
 
-
-// TODO: Step 3.1. Use this to create all tables!
 export const createTables: (stack: CDK.Stack) => AllTables =
     stack => {
         return {
@@ -46,5 +38,10 @@ export const createTables: (stack: CDK.Stack) => AllTables =
                 partitionKey: { name: 'domain', type: DynamoDB.AttributeType.STRING },
                 tableName,
             })),
+            errorsTable: createTableWith(stack, 'errorsTable', tableName => ({
+                partitionKey: {name: 'domain', type: DynamoDB.AttributeType.STRING},
+                sortKey: {name: 'createdAt', type: DynamoDB.AttributeType.NUMBER},
+                tableName,
+            }))
         };
     };

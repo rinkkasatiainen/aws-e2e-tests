@@ -22,24 +22,16 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "*",
-        "node_modules/*",
-        "cdk/test/types/*"
-      ]
-    }
+    "rootDir": "src",
+    "outDir": "dist/src",
+    "baseUrl": "src"
   },
   "include": [
-    "cdk/bin/cdk.ts",
-    "cdk/lib/dev/lambdas/*.ts",
-    "cdk/test/acceptance/*.ts",
-    "dist/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
+    "cdk",
     "cdk.out"
   ]
 }

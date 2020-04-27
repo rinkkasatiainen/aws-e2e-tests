@@ -1,11 +1,11 @@
 import {Context, Handler, SNSEvent} from 'aws-lambda';
 import {AWSError, DynamoDB} from 'aws-sdk';
 import {PromiseResult} from 'aws-sdk/lib/request';
-import {DomainError, ErrorType} from "./result";
+import {DomainError, ErrorType} from "../common/result";
+import moment from "moment";
 
 // todo: Use MOMENT LATER
-const now: () => number =
-    () => 1587405651567;
+const now: () => number = moment.now
 
 export const isValidErrorFromSNS: (x: SNSEvent | any) => boolean =
     snsEvent => snsEvent.Records && snsEvent.Records.length > 0 && !!snsEvent.Records[0].Sns;
