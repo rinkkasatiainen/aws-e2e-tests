@@ -3,7 +3,8 @@ import * as CDK from '@aws-cdk/core';
 import {env} from "../../bin/env";
 
 export type PossibleSnsTopics = {
-    SNS_TOPIC_ERRORS: SNS.ITopic;
+    SNS_TOPIC_ERRORS?: SNS.ITopic;
+    SNS_TOPIC_SUCCESS?: SNS.ITopic;
 };
 
 export type SnsTopicNames = keyof PossibleSnsTopics;

@@ -4,7 +4,7 @@ import { SnsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as SNS from '@aws-cdk/aws-sns';
 import path from 'path';
 
-import { LambdaProps } from '../../lib/constructs/lambdas';
+import {LambdaProps} from '../../lib/constructs/lambdas';
 import { policyForDynamoRW, policyForSns, policyLogs } from '../../lib/constructs/policies';
 import { PossibleSnsTopics } from '../../lib/constructs/sns-topics';
 
@@ -28,7 +28,6 @@ export const createSpyLambda: LambdaCreator =
         ];
 
         const environmentVars = {
-            NODE_ENV: 'dev',
             SPY_TABLE_NAME: spyTable.tableName,
         };
 

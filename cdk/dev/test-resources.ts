@@ -10,6 +10,7 @@ import {addCfnOutput} from "../lib/constructs/cfn-output";
 export interface TestResourcesProps {
     topics: SpyLambdaTopics;
     tables: AllTables;
+    spyTable: DynamoDB.ITable;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -46,7 +47,6 @@ export const createTestTables: (stack: CDK.Stack) => E2EStackOutput =
         const spyTableName = `spy-table-${env}`
         createTable(scope, spyTableName, {tableName: spyTableName});
 
-        // TODO: Step 3.1: Add CloudFormation Output to pass SpyTable name for E2E test
         addCfnOutput(scope)('SpyTableName')({
             value: spyTableName,
             exportName: `${ scope.stackName }:Table:SpyTableName`,
