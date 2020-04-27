@@ -6,13 +6,12 @@ import * as CDK from '@aws-cdk/core';
 
 export interface EnvVars {
     NODE_ENV: string;
+    API_CALL_URL: string;
 }
-
-type EnvVarKey = 'NODE_ENV';
 
 export interface LambdaProps {
     policies: IAM.PolicyStatement[];
-    environmentVars: { [key in EnvVarKey]: string };
+    environmentVars: { [key: string]: string };
     triggers: SnsEventSource[];
     functionName: string;
     handler: string;
@@ -66,16 +65,17 @@ const buildLambdaFunction: (scope: CDK.Stack, props: LambdaProps) => Lambda.Func
     };
 
 export const createLambda: (x: CDK.Stack) =>
-    (y: { envVars: EnvVars }) =>
+    (y: { envVars?: EnvVars }) =>
         (z: LambdaProps) =>
             Lambda.Function =
     scope => ({ envVars }) => props => {
         const { environmentVars } = props;
+        const basicEnv = envVars || {}
 
         return buildLambdaFunction(scope, {
             ...props, environmentVars: {
                 ...environmentVars,
-                ...envVars,
+                ...basicEnv,
             },
         });
 

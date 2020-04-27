@@ -11,14 +11,16 @@ Previous steps:
    * [step-0](./step-0.md)
    * [step-1](./step-1.md)
    * [step-2](./step-2.md)
+   * [step-3](./step-3.md)
 
 ## Introduction to step goals
 
 Learning goals are
-   * introduce CloudFormation Outputs (set the topic name)
-   * trigger a lambda function that will fail (and publish message to SNS)
-   * verify that error is stored to spy DB
-
+   * Fake a HTTP call to a 3rd party service (that we don't want to use in tests.)
+   * inject fake-data to lambda either by
+        * environment variable
+        * in dynamoDB entry
+        * as parameter from SNS Event
 
 ## BEFORE : get ready for this step:
 To start with this step, do the following:
