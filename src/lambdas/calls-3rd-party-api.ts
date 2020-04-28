@@ -7,10 +7,10 @@ interface Message {
     data: { error: string; bar: string; };
 }
 
-const callFunc: (domain: string) => Promise<any> =
-    async url => {
+const callFunc: (url: string, domain: string,) => Promise<any> =
+    async (url, domain) => {
         try {
-            const response = await axios.get(`${url}/success/api`);
+            const response = await axios.get(`${url}/success/api?domain=${domain}`);
             const success = response.data;
             console.log(success);
             return {success}
@@ -45,7 +45,8 @@ export const handler: Handler<SNSEvent, { statusCode: number, body: string }> =
                     apiCall = process.env.API_CALL_URL;
 
                     if (apiCall) {
-                        const body = await callFunc(apiCall)
+                        const body = await callFunc(apiCall, domain)
+                        console.log("result of call", body)
 
                         const successsnsarn = process.env.SUCCESS_SNS_ARN;
                         await new SNS({region})

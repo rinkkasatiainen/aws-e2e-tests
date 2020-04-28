@@ -32,11 +32,23 @@ Learning goals are
 To start with this step, do the following:
 
    * `git reset --hard HEAD` 
-   * `git checkout step-3`  
+   * `git checkout step-4`  
    * `npm install`  # to install dependencies
-   * `npm run tsc:watch` to start watching changes on CDK stack files.
    
-## Step 4: Deploy first 'production lambda' and test that
+## Step 4: Changes from step-3
+
+   * dist folder no longer exists -> production code is in `src` folder where a lambda 
+   [calls 3rd party api](./src/lambdas/calls-3rd-party-api.ts) uses 3rd party libraries to make a HTTP call. This 
+   causes a couple of issues
+        * we need to add the sources of the 3rd party api (`axios`) to the bundle that's uploaded to Lambda
+        * to do that, we bundle the script using `webpack`
+   * the steps to build and deploy are to execute `npn run build`, which
+        1) that uses `tsc` to transpile Typescript code from `src` to `dist/src` folder
+        2) next step is to execute `webpack` to bundle code from `dist/src` to `dist/publish` which does the bundling magic.
+            * later, tree shaking happens at this stage
+        3) executes `tsc` on the CDK app (which uses different [tsconfig.json](cdk/tsconfig.json)). 
+        That makes cdk app ready to folder `dist/cdk`
+   * once this is done, app can be deployed using `npm run cdk:deploy`
 
 ### Step 4.1:  Create first production lambda
 
