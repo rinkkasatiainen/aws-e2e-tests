@@ -19,24 +19,19 @@ export interface SpyLambdaTopics extends PossibleSnsTopics {
     SNS_TOPIC_ERRORS: SNS.ITopic;
 }
 
-
-// TODO: Step 2.3. Create a LambdaProps that describe a lambda that is being created to AWS
 export const createSpyLambda: LambdaCreator =
     ({ spyTable }) => ({ SNS_TOPIC_ERRORS }) => {
-        // TODO: Step 2.3 Add policies for 'SNS, DynamoDB and logs'
         const policies: IAM.PolicyStatement[] = [
             policyForSns([SNS_TOPIC_ERRORS.topicArn]),
             policyLogs(),
             policyForDynamoRW([spyTable.tableArn]),
         ];
 
-        // TODO: Step 2.3. Define environment vars used by the lambda!
         const environmentVars = {
             NODE_ENV: 'dev',
             SPY_TABLE_NAME: spyTable.tableName,
         };
 
-        // TODO: Step 2.3: Add an SnsEventSource trigger for the error topic!
         const triggers: SnsEventSource[] = [ new SnsEventSource(SNS_TOPIC_ERRORS)];
 
         return {

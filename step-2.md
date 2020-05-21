@@ -111,7 +111,7 @@ test-stack: creating CloudFormation changeset...
  ✅  test-stack
 
 Stack ARN:
-arn:aws:cloudformation:eu-central-1:<accountId>:stack/test-stack/<stackId>
+arn:aws:cloudformation:eu-central-1:<accountId>:stack/ResourcesDev/<stackId>
 ```
 
 ### Step 2.3, create a lambda that listens the SNS topic and pushes events to DynamoDB

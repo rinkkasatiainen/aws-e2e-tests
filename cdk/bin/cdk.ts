@@ -1,14 +1,16 @@
 // This is the way all CDK packages are imported.
 import * as CDK from '@aws-cdk/core';
 import {addTestResources, createTestTables} from '../dev/test-resources';
-import { createTopics } from '../lib/constructs/sns-topics';
-import { createStack } from '../lib/e2e-stack';
-import { env } from './env';
+import {createTopics} from '../lib/constructs/sns-topics';
+import {createStack} from '../lib/e2e-stack';
+import {env} from './env';
+import {createTables} from "../lib/constructs/dynamodb";
+import {addCfnOutput} from "../lib/constructs/cfn-output";
 
 const app = new CDK.App();
 
 interface E2EStackProps {
-    tags: {[key: string]: string};
+    tags: { [key: string]: string };
 }
 
 
@@ -20,6 +22,7 @@ class E2EStack extends CDK.Stack {
         });
     }
 }
+
 class PermanentResources extends CDK.Stack {
     public constructor(parent: CDK.App, id: string) {
         super(parent, id, {
@@ -33,33 +36,27 @@ const capitalize = (s: string) => {
 }
 
 const stack = new E2EStack(app, `TestStack${capitalize(env)}`, {
-    tags: { aTag: 'aValue' },
+    tags: {aTag: 'aValue'},
 });
-const permamentResources = new PermanentResources(app, `Resources${capitalize(env)}`);
-
-createTestTables(permamentResources)
+const permanentResources = new PermanentResources(app, `Resources${capitalize(env)}`);
+const tables = createTables(permanentResources);
 
 const topics = createTopics(stack);
+createStack(stack, {topics, tables});
 
-// TODO: Step 3.1 - add fails-miserably code to the stack.
-/* const { tables } = */ createStack(stack, { topics });
+// Add Test resources
+createTestTables(permanentResources);
+addTestResources(stack, {topics, tables});
+// End
 
-const { resourcesTable, errorsTable } = tables;
-addCfnOutput(stack)('ErrorsTable')({
-    value: errorsTable.tableName,
-    exportName: `${stack.stackName}:Table:ErrorsTable`,
-})
+// TODO: STEP 3.2 - add ErrorsTable to CloudFormation Outputs.
+// const {resourcesTable, errorsTable} = tables;
+// addCfnOutput(stack)('ErrorsTable')({
+//     value: errorsTable.tableName,
+//     exportName: `${stack.stackName}:Table:ErrorsTable`,
+// })
 
-addTestResources(stack, { topics, tables });
-
-
-const { resourcesTable, errorsTable } = tables;
-addCfnOutput(stack)('ErrorsTable')({
-    value: errorsTable.tableName,
-    exportName: `${stack.stackName}:Table:ErrorsTable`,
-})
-
-addCfnOutput(stack)('ResourcesTable')({
-    value: resourcesTable.tableName,
-    exportName: `${stack.stackName}:Table:ResourcesTable`,
-});
+// addCfnOutput(stack)('ResourcesTable')({
+//     value: resourcesTable.tableName,
+//     exportName: `${stack.stackName}:Table:ResourcesTable`,
+// });

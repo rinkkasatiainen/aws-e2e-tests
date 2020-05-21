@@ -56,7 +56,7 @@ describe('Scaffold - first E2E test', () => {
             console.log("added test data")
 
             // Act --> Invoke the function
-            const lambdaName = stackConfig.lambdateststackdevFailsMiserablyhandler;
+            const lambdaName = stackConfig.lambdaThatFails;
             await execute.invokeLambda({FunctionName: lambdaName, payloadAsJson: {domain}});
             console.log("invoked function")
 
@@ -68,14 +68,14 @@ describe('Scaffold - first E2E test', () => {
             return new Promise(resolve => resolve());
         }).timeout(10000);
 
-        it('errorLogger should log to dynamodb', async () => {
+        it('errorLogger should be triggered by the failure, and that logs to dynamodb', async () => {
 
             // Arrange --> put data to DynamoDB!!
             await setup.addResource({domain, data: {error: domain}}).save();
             console.log("added test data")
 
             // Act --> Invoke the function
-            const lambdaName = stackConfig.lambdateststackdevFailsMiserablyhandler;
+            const lambdaName = stackConfig.lambdaThatFails
             await execute.invokeLambda({FunctionName: lambdaName, payloadAsJson: {domain}});
             console.log("invoked function")
 

@@ -28,14 +28,13 @@ export const failsMiserablyLambda: LambdaCreator =
             policyForDynamoRW([resourcesTable.tableArn]),
         ];
 
-        // Step 3.1: Add envVars that the labda uses / see dist/fails-miserably.ts
+        // TODO: Step 3.1: Add envVars that the labda uses / see dist/fails-miserably.ts
+        // TODO: Step 3.1: Look for `process.env` to see what env variables are used!
         const environmentVars = {
             NODE_ENV: 'dev',
-            RESOURCE_TABLE_NAME: resourcesTable.tableName,
-            ERRORS_SNS_ARN: SNS_TOPIC_ERRORS.topicArn,
         };
 
-        // Step 3.1: no event sources
+        // TODO: Step 3.1: no event sources
         const triggers: SnsEventSource[] = [];
 
         return {
