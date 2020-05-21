@@ -1,5 +1,6 @@
 import * as SNS from '@aws-cdk/aws-sns';
 import * as CDK from '@aws-cdk/core';
+import {env} from "../../bin/env";
 
 export type PossibleSnsTopics = {
     SNS_TOPIC_ERRORS: SNS.ITopic;

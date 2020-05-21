@@ -1,6 +1,6 @@
 // This is the way all CDK packages are imported.
 import * as CDK from '@aws-cdk/core';
-import { addTestResources } from '../dev/test-resources';
+import {addTestResources, createTestTables} from '../dev/test-resources';
 import { createTopics } from '../lib/constructs/sns-topics';
 import { env } from './env';
 
@@ -25,12 +25,25 @@ class E2EStack extends CDK.Stack {
         });
     }
 }
+class PermanentResources extends CDK.Stack {
+    public constructor(parent: CDK.App, id: string) {
+        super(parent, id, {
+            tags: {aTag: 'avalue'},
+        });
+    }
+}
 
-// tslint:disable-next-line:no-unused-expression
-const stack = new E2EStack(app, `test-stack-${env}`, {
+const capitalize = (s: string) => {
+    return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+const stack = new E2EStack(app, `TestStack${capitalize(env)}`, {
     tags: { aTag: 'aValue' },
 });
+const permamentResources = new PermanentResources(app, `Resources${capitalize(env)}`);
 
-createTopics(stack);
+createTestTables(permamentResources)
+
+const topics = createTopics(stack);
 // Add test related resources here. Everything we need to set up tools to see what's happening inside.
-addTestResources(stack, { topics: {} });
+addTestResources(stack, { topics });
