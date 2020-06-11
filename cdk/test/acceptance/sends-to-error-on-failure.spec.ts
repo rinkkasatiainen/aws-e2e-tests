@@ -23,6 +23,10 @@ const randomUUID = u.v4;
 
 // const random100 = () => Math.floor(Math.random() * 100);
 
+const capitalize = (s: string) => {
+    return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 // const TIMESTAMP_IN_THE_PAST = 1579252880412;
 describe('Scaffold - first E2E test', () => {
     let domain: string;
@@ -35,7 +39,7 @@ describe('Scaffold - first E2E test', () => {
 
     before(async function () {
         this.timeout(20000);
-        stackConfig = await fetchStackConfiguration({StackName: `test-stack-${env}`});
+        stackConfig = await fetchStackConfiguration([{StackName: `TestStack${capitalize(env)}`}, {StackName: `Resources${capitalize(env)}`}]);
         await warmUpLambdas(stackConfig, ['']);
 
         return new Promise(resolve => resolve());

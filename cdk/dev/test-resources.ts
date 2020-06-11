@@ -5,6 +5,7 @@ import {createSpyLambda, SpyLambdaTopics} from './constructs/spy-lambda';
 import {env} from "../bin/env";
 import {AllTables} from "../lib/constructs/dynamodb";
 import {createLambda} from "../lib/constructs/lambdas";
+import {addCfnOutput} from "../lib/constructs/cfn-output";
 
 export interface TestResourcesProps {
     topics: SpyLambdaTopics;
@@ -18,7 +19,7 @@ interface E2EStackOutput {
 export const addTestResources: (stack: CDK.Stack, p: TestResourcesProps) => E2EStackOutput =
     (scope, {topics}) => {
         const {SNS_TOPIC_ERRORS} = topics;
-        const spyTable = getDynamoDBTable(scope, `XXYYZZ`)
+        const spyTable = getDynamoDBTable(scope, `spy-table`)
         createLambda(scope)({envVars: {NODE_ENV: 'dev'}})(createSpyLambda({spyTable})({SNS_TOPIC_ERRORS}));
 
         return {};
@@ -42,14 +43,14 @@ export const createTable: (scope: CDK.Stack, id: string, props: { tableName: str
 
 export const createTestTables: (stack: CDK.Stack) => E2EStackOutput =
     (scope) => {
-        const spyTableName = `XXYYZZ-${env}`
+        const spyTableName = `spy-table-${env}`
         createTable(scope, spyTableName, {tableName: spyTableName});
 
         // TODO: Step 3.1: Add CloudFormation Output to pass SpyTable name for E2E test
-        // addCfnOutput(scope)('SpyTableName')({
-        //     value: spyTableName,
-        //     exportName: `${ scope.stackName }:Table:SpyTableName`,
-        // });
+        addCfnOutput(scope)('SpyTableName')({
+            value: spyTableName,
+            exportName: `${ scope.stackName }:Table:SpyTableName`,
+        });
 
         return {};
     };

@@ -6,6 +6,7 @@ import {createStack} from '../lib/e2e-stack';
 import {env} from './env';
 import {createTables} from "../lib/constructs/dynamodb";
 import {addCfnOutput} from "../lib/constructs/cfn-output";
+// import {addCfnOutput} from "../lib/constructs/cfn-output";
 
 const app = new CDK.App();
 
@@ -50,13 +51,13 @@ addTestResources(stack, {topics, tables});
 // End
 
 // TODO: STEP 3.2 - add ErrorsTable to CloudFormation Outputs.
-// const {resourcesTable, errorsTable} = tables;
-// addCfnOutput(stack)('ErrorsTable')({
-//     value: errorsTable.tableName,
-//     exportName: `${stack.stackName}:Table:ErrorsTable`,
-// })
-
-// addCfnOutput(stack)('ResourcesTable')({
-//     value: resourcesTable.tableName,
-//     exportName: `${stack.stackName}:Table:ResourcesTable`,
-// });
+const {resourcesTable, errorsTable} = tables;
+addCfnOutput(permanentResources)('ErrorsTable')({
+    value: errorsTable.tableName,
+    exportName: `${stack.stackName}:Table:ErrorsTable`,
+})
+//
+addCfnOutput(permanentResources)('ResourcesTable')({
+    value: resourcesTable.tableName,
+    exportName: `${stack.stackName}:Table:ResourcesTable`,
+});

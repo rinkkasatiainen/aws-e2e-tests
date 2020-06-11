@@ -2,10 +2,13 @@ import AWS from 'aws-sdk';
 
 export const region: string = process.env.DEFAULT_AWS_REGION || process.env.AWS_REGION || 'eu-central-1';
 
-export type StackConfigKeys =  'snsErrorTopic' | 'ResourcesTable' | 'SpyTableName' | 'ErrorsTable' | 'lambdaThatFails';
+export type StackConfigKeys = 'snsErrorTopic' | 'ResourcesTable' | 'SpyTableName' | 'ErrorsTable' | 'lambdaThatFails';
 
 export type StackConfigProps = { [key in StackConfigKeys]: string };
-export interface LambdaNames { lambdaNames: string[]; }
+
+export interface LambdaNames {
+    lambdaNames: string[];
+}
 
 export interface StackConfig extends StackConfigProps, LambdaNames {
     // lambdaNames: string[]; // All lambdas that can be warmed up!
@@ -17,10 +20,24 @@ export interface StackConfig extends StackConfigProps, LambdaNames {
     // lambdateststackdevFailsMiserablyhandler: string;
 }
 
-export const fetchStackConfiguration: (x: { StackName: string }) => Promise<StackConfig> =
-    async ({ StackName }) => {
-        const cf = new AWS.CloudFormation({ region });
-        const { Stacks } = await cf.describeStacks({ StackName }).promise();
+export const fetchStackConfiguration: (x: Array<{ StackName: string }>) => Promise<StackConfig> =
+    async (stacks) => {
+        const promises = stacks.map(stack => fetchSingleStackConfiguration(stack))
+
+        const config = await Promise.all(promises).then(
+            stackConfigs => {
+                console.log("promises", stackConfigs)
+                return stackConfigs.reduce((carry, stackConfig) => ({...carry, ...stackConfig}), {})
+            }
+        )
+        console.log("CONFIG", config)
+        return config as StackConfig
+    };
+
+const fetchSingleStackConfiguration: (x: { StackName: string }) => Promise<StackConfig> =
+    async ({StackName}) => {
+        const cf = new AWS.CloudFormation({region});
+        const {Stacks} = await cf.describeStacks({StackName}).promise();
         if (!Stacks) {
             throw new Error(`Unknown stack "${StackName}"!`);
         }
@@ -30,11 +47,11 @@ export const fetchStackConfiguration: (x: { StackName: string }) => Promise<Stac
             .map(output => output.OutputValue);
 
         return stackOutputs.reduce(
-            (outputs: any, { OutputKey, OutputValue }) => ({
+            (outputs: any, {OutputKey, OutputValue}) => ({
                 ...outputs,
                 [OutputKey as string]: OutputValue,
             }),
-            { lambdaNames }
+            {lambdaNames}
         );
     };
 

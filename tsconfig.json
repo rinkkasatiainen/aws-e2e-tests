@@ -34,7 +34,7 @@
   },
   "include": [
     "cdk/bin/cdk.ts",
-    "cdk/lib/dev/lambdas/*.ts",
+    "cdk/dev/lambdas/*.ts",
     "cdk/test/acceptance/*.ts",
     "dist/*.ts"
   ],

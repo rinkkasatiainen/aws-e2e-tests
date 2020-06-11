@@ -13,21 +13,24 @@ export type AllTables = {
     [key in TableNames]: DynamoDB.ITable
 };
 
-// TODO: Step 3.1 Use this helper to create the new table - define key where it's used
-// const createTableWith:
-//     (scope: CDK.Stack, id: TableNames, propProvider: (tableName: string) => DynamoDB.TableProps) =>
-//         DynamoDB.ITable =
-//     (scope, id, props) =>
-//         new DynamoDB.Table(scope, id, props(`${ id }-${ env }`));
-//
+const createTableWith:
+    (scope: CDK.Stack, id: TableNames, propProvider: (tableName: string) => DynamoDB.TableProps) =>
+        DynamoDB.ITable =
+    (scope, id, props) =>
+        new DynamoDB.Table(scope, id, props(`${ id }-${ env }`));
 
-// TODO: Step 3.1. Use this to create all tables!
+
 export const createTables: (stack: CDK.Stack) => AllTables =
     stack => {
         return {
-            // resourcesTable: createTableWith(stack, 'resourcesTable', tableName => ({
-            //     partitionKey: { name: 'domain', type: DynamoDB.AttributeType.STRING },
-            //     tableName,
-            // })),
+            resourcesTable: createTableWith(stack, 'resourcesTable', tableName => ({
+                partitionKey: { name: 'domain', type: DynamoDB.AttributeType.STRING },
+                tableName,
+            })),
+            errorsTable: createTableWith(stack, 'errorsTable', tableName => ({
+                partitionKey: {name: 'domain', type: DynamoDB.AttributeType.STRING},
+                sortKey: {name: 'createdAt', type: DynamoDB.AttributeType.NUMBER},
+                tableName,
+            }))
         };
     };
