@@ -27,9 +27,6 @@
     "baseUrl": "src"
   },
   "include": [
-    "cdk/bin/cdk.ts",
-    "cdk/dev/lambdas/*.ts",
-    "cdk/test/acceptance/*.ts",
     "src/**/*.ts"
   ],
   "exclude": [

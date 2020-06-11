@@ -6,6 +6,8 @@ import {createStack} from '../lib/e2e-stack';
 import {env} from './env';
 import {createTables} from "../lib/constructs/dynamodb";
 import {addCfnOutput} from "../lib/constructs/cfn-output";
+import {createFakeApi} from "../dev/constructs/fake-api";
+import {EnvVars} from "../lib/constructs/lambdas";
 // import {addCfnOutput} from "../lib/constructs/cfn-output";
 
 const app = new CDK.App();
@@ -42,15 +44,22 @@ const stack = new E2EStack(app, `TestStack${capitalize(env)}`, {
 const permanentResources = new PermanentResources(app, `Resources${capitalize(env)}`);
 const tables = createTables(permanentResources);
 
+// This is something really test dependant - fake api requires spyTable to be used,
+
+const { spyTable } = createTestTables(permanentResources);
+const fakeApi = createFakeApi(stack, {lambdas: [{filename: 'success'}]})(spyTable)
+const envVars: EnvVars = {
+    NODE_ENV: 'dev',
+    API_CALL_URL: fakeApi.url
+};
+
 const topics = createTopics(stack);
-createStack(stack, {topics, tables});
+createStack(stack, {topics, tables, envVars});
 
 // Add Test resources
-createTestTables(permanentResources);
-addTestResources(stack, {topics, tables});
-// End
 
-// TODO: STEP 3.2 - add ErrorsTable to CloudFormation Outputs.
+addTestResources(stack, {topics, tables, spyTable, envVars});
+
 const {resourcesTable, errorsTable} = tables;
 addCfnOutput(permanentResources)('ErrorsTable')({
     value: errorsTable.tableName,
