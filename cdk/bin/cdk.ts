@@ -61,6 +61,10 @@ createStack(stack, {topics, tables, envVars});
 addTestResources(stack, {topics, tables, spyTable, envVars});
 
 const {resourcesTable, errorsTable} = tables;
+addCfnOutput(permanentResources)('notExisting')({
+    value: errorsTable.tableName,
+    exportName: `${stack.stackName}:Table:ErrorsTable`,
+})
 addCfnOutput(permanentResources)('ErrorsTable')({
     value: errorsTable.tableName,
     exportName: `${stack.stackName}:Table:ErrorsTable`,
