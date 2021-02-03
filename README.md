@@ -40,11 +40,14 @@ and you'll see the AWS keys in your environment variables, when on the given dir
 
 To install AWS CLI, follow the [official install instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 
+### Install CDK
+Follow [official instructions](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html#getting_started_install) 
+
 ## Test
 
 This step is ready, when running command 
 ```bash
-   npx cdk --profile=e2e list
+   npx cdk list
 ```
 fails with  message "--app is required either in command-line, in cdk.json or in ~/.cdk.json"
 
